@@ -85,7 +85,7 @@ async function migrate() {
 
         if (!restaurantName) continue;
 
-        const restaurantId = restaurantName.toLowerCase().replace(/\s+/g, '-');
+        const restaurantId = restaurantName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
         restaurants.push({
             id: restaurantId,

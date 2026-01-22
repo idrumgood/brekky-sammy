@@ -1,6 +1,20 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, MapPin, ArrowRight } from 'lucide-react';
 
 export default function Hero() {
+    const router = useRouter();
+    const [query, setQuery] = useState('');
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (query.trim()) {
+            router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+        }
+    };
+
     return (
         <section className="relative overflow-hidden rounded-3xl bg-breakfast-cream py-16 px-8 mb-12 hero-gradient shadow-2xl">
             <div className="relative z-10 max-w-2xl mx-auto text-center">
@@ -21,15 +35,20 @@ export default function Hero() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 max-w-md mx-auto relative group">
-                    <div className="relative flex-1 w-full">
+                    <form onSubmit={handleSearch} className="relative flex-1 w-full">
                         <input
                             type="text"
                             placeholder="What are you craving?"
-                            className="w-full h-14 pl-12 pr-4 bg-white rounded-2xl border-2 border-border focus:border-primary outline-none text-lg transition-all shadow-md group-focus-within:shadow-xl group-focus-within:-translate-y-1"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            className="w-full h-14 pl-12 pr-4 bg-white rounded-2xl border-2 border-breakfast-border focus:border-primary outline-none text-lg transition-all shadow-md group-focus-within:shadow-xl group-focus-within:-translate-y-1"
                         />
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={24} />
-                    </div>
-                    <button className="h-14 px-8 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-primary/90 transition-all shadow-lg active:scale-95 whitespace-nowrap group-hover:-translate-y-1">
+                    </form>
+                    <button
+                        onClick={handleSearch}
+                        className="h-14 px-8 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-primary/90 transition-all shadow-lg active:scale-95 whitespace-nowrap group-hover:-translate-y-1"
+                    >
                         Let's Eat
                     </button>
                 </div>
