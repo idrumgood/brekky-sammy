@@ -39,11 +39,11 @@
   ],
   "sandwiches": [
     {
-      "id": "allez-caf--breakfast-sandwich",
-      "name": "Breakfast sandwich",
+      "id": "allez-caf--allez-breakfast-sandwich",
+      "name": "Allez Breakfast Sandwich",
       "restaurantId": "allez-caf-",
-      "averageRating": 3.6666666666666665,
-      "reviewCount": 3,
+      "averageRating": 3.5,
+      "reviewCount": 4,
       "ingredients": [
         "egg",
         "hashbrown",
@@ -51,84 +51,40 @@
         "bacon",
         "jalapeno",
         "cheese",
-        "aioli"
-      ]
-    },
-    {
-      "id": "allez-caf--breakfast-sando",
-      "name": "Breakfast sando",
-      "restaurantId": "allez-caf-",
-      "averageRating": 3,
-      "reviewCount": 1,
-      "ingredients": [
-        "egg",
-        "bacon",
-        "hashbrown",
+        "aioli",
         "muffin",
         "jam"
       ]
     },
     {
       "id": "chubby-boys-chubby-boy-breakfast-sandwich",
-      "name": "Chubby Boy breakfast sandwich",
+      "name": "Chubby Boy Breakfast Sandwich",
       "restaurantId": "chubby-boys",
-      "averageRating": 3,
-      "reviewCount": 1,
+      "averageRating": 3.5,
+      "reviewCount": 4,
       "ingredients": [
         "egg",
         "bacon",
         "hashbrown",
-        "jam"
-      ]
-    },
-    {
-      "id": "chubby-boys-chubby-boy-sandwich",
-      "name": "Chubby boy sandwich",
-      "restaurantId": "chubby-boys",
-      "averageRating": 4,
-      "reviewCount": 1,
-      "ingredients": [
-        "egg",
-        "bacon",
-        "hashbrown",
+        "jam",
         "potato bun",
-        "jalapeno",
-        "jam"
+        "jalapeno"
       ]
     },
     {
-      "id": "chubby-boys-the-only-sandwich-option",
-      "name": "The only sandwich option",
-      "restaurantId": "chubby-boys",
-      "averageRating": 4,
-      "reviewCount": 1,
-      "ingredients": [
-        "bacon",
-        "jam"
-      ]
-    },
-    {
-      "id": "chubby-boys-chubby-boy-bfast-sando",
-      "name": "Chubby boy bfast sando",
-      "restaurantId": "chubby-boys",
-      "averageRating": 3,
-      "reviewCount": 1,
-      "ingredients": [
-        "hashbrown",
-        "potato bun"
-      ]
-    },
-    {
-      "id": "loaf-lounge-sandwich-special-sweet-potato-bacon-pickled-jalepeno-hashbrown",
-      "name": "Sandwich Special (sweet potato, bacon, pickled jalepeno), Hashbrown",
+      "id": "loaf-lounge-sandwich-special",
+      "name": "Sandwich Special",
       "restaurantId": "loaf-lounge",
-      "averageRating": 4,
-      "reviewCount": 1,
+      "averageRating": 3.5,
+      "reviewCount": 2,
       "ingredients": [
         "bacon",
         "hashbrown",
         "muffin",
-        "sweet potato"
+        "sweet potato",
+        "egg",
+        "english muffin",
+        "jalapeno"
       ]
     },
     {
@@ -141,21 +97,6 @@
         "egg",
         "bacon",
         "mayo"
-      ]
-    },
-    {
-      "id": "loaf-lounge-english-muffin-sweet-potato-egg-bacon-pickled-jalape-o",
-      "name": "English muffin, sweet potato, egg, bacon, pickled jalapeño",
-      "restaurantId": "loaf-lounge",
-      "averageRating": 3,
-      "reviewCount": 1,
-      "ingredients": [
-        "egg",
-        "bacon",
-        "muffin",
-        "english muffin",
-        "jalapeno",
-        "sweet potato"
       ]
     },
     {
@@ -183,64 +124,31 @@
       ]
     },
     {
-      "id": "spinning-j-spinning-j-sandwich-w-sausage-on-a-biscuit",
-      "name": "Spinning J sandwich w/ sausage on a biscuit",
+      "id": "spinning-j-spinning-j-breakfast-sandwich",
+      "name": "Spinning J Breakfast Sandwich",
       "restaurantId": "spinning-j",
-      "averageRating": 5,
-      "reviewCount": 1,
+      "averageRating": 4.5,
+      "reviewCount": 2,
       "ingredients": [
         "egg",
         "sausage",
         "cheese",
-        "biscuit"
-      ]
-    },
-    {
-      "id": "spinning-j-the-spinning-j-breakfast-sandwich",
-      "name": "The spinning j breakfast sandwich",
-      "restaurantId": "spinning-j",
-      "averageRating": 4,
-      "reviewCount": 1,
-      "ingredients": [
-        "egg",
-        "sausage",
+        "biscuit",
         "muffin",
         "english muffin"
       ]
     },
     {
-      "id": "middle-brow--sausage-egg-sammy",
-      "name": "Sausage, Egg sammy",
+      "id": "middle-brow--sausage-egg-sandwich",
+      "name": "Sausage & Egg Sandwich",
       "restaurantId": "middle-brow-",
-      "averageRating": 2,
-      "reviewCount": 1,
+      "averageRating": 2.3333333333333335,
+      "reviewCount": 3,
       "ingredients": [
         "egg",
         "sausage",
-        "jam"
-      ]
-    },
-    {
-      "id": "middle-brow--sauasage-egg-sammy",
-      "name": "Sauasage, egg sammy",
-      "restaurantId": "middle-brow-",
-      "averageRating": 2,
-      "reviewCount": 1,
-      "ingredients": [
-        "egg"
-      ]
-    },
-    {
-      "id": "middle-brow--sausage-egg-sandwhich",
-      "name": "Sausage, egg sandwhich",
-      "restaurantId": "middle-brow-",
-      "averageRating": 3,
-      "reviewCount": 1,
-      "ingredients": [
-        "egg",
-        "sausage",
-        "cheese",
-        "jam"
+        "jam",
+        "cheese"
       ]
     },
     {
@@ -260,137 +168,137 @@
   ],
   "reviews": [
     {
-      "sandwichId": "allez-caf--breakfast-sandwich",
+      "sandwichId": "allez-caf--allez-breakfast-sandwich",
       "userName": "Bryan",
       "rating": 4,
       "comment": "Really enjoyed the firmer egg square on this one, had a good egg-feel. The hashbrown on the sandwich was almost latke style, very dark golden on the outside and creamy inside. Espresso was super dark stone fruit.",
-      "createdAt": "2026-01-22T20:53:37.586Z"
+      "createdAt": "2026-01-22T21:03:45.152Z"
     },
     {
-      "sandwichId": "allez-caf--breakfast-sandwich",
+      "sandwichId": "allez-caf--allez-breakfast-sandwich",
       "userName": "Amber",
       "rating": 3,
       "comment": "The bun did not hold together. But the rest of it was pretty good, liked the bacon slices and this egg square was slightly better than Chubby boys. I liked the jalapenos too. The hashbrown was a little soft and felt a little heavy compared to the rest of the components. ",
-      "createdAt": "2026-01-22T20:53:37.586Z"
+      "createdAt": "2026-01-22T21:03:45.152Z"
     },
     {
-      "sandwichId": "allez-caf--breakfast-sandwich",
+      "sandwichId": "allez-caf--allez-breakfast-sandwich",
       "userName": "Jared",
       "rating": 4,
       "comment": "Solid sandwich. Crispy hash brown nicely complicated three squishy egg. Cheese was lost among the bacon, aioli and jalapeño spread. Minus one point for the store bought bun. ",
-      "createdAt": "2026-01-22T20:53:37.586Z"
+      "createdAt": "2026-01-22T21:03:45.152Z"
     },
     {
-      "sandwichId": "allez-caf--breakfast-sando",
+      "sandwichId": "allez-caf--allez-breakfast-sandwich",
       "userName": "Mick",
       "rating": 3,
       "comment": "I think in all of these, I'm missing a bit of structure from the buns?? Kinda missing the sturdiness of an egg mcmuffin. I really do appreciate the egg block and the jam on this one tho. The bacon was a bit burnt for me and the hashbrown, while i enjoyed the crispiness, was a lil too \"potato-y\"  ",
-      "createdAt": "2026-01-22T20:53:37.586Z"
+      "createdAt": "2026-01-22T21:03:45.152Z"
     },
     {
       "sandwichId": "chubby-boys-chubby-boy-breakfast-sandwich",
       "userName": "Bryan",
       "rating": 3,
       "comment": "Hashbrown was the best part of the sandwich. Egg was unique but in the background. Bacon jam stuff was solid, jalepeno was a welcome touch when it came through. Espresso was intense and dark fruity.",
-      "createdAt": "2026-01-22T20:53:37.587Z"
+      "createdAt": "2026-01-22T21:03:45.153Z"
     },
     {
-      "sandwichId": "chubby-boys-chubby-boy-sandwich",
+      "sandwichId": "chubby-boys-chubby-boy-breakfast-sandwich",
       "userName": "Amber",
       "rating": 4,
       "comment": "Overall really liked this sandwich. Liked the choice of the potato bun with the hashbrown and delicious bacon jam, and the jalapeno was a nice fresh touch. Was not a huge fan of the square egg, lacked egg flavor. ",
-      "createdAt": "2026-01-22T20:53:37.587Z"
+      "createdAt": "2026-01-22T21:03:45.153Z"
     },
     {
-      "sandwichId": "chubby-boys-the-only-sandwich-option",
+      "sandwichId": "chubby-boys-chubby-boy-breakfast-sandwich",
       "userName": "Jared",
       "rating": 4,
       "comment": "Structural integrity was great. Minus a point for a store bought bun. Minus a half point for too sweet of a bacon jam. Plus half a point for picking a potato roll of choice. Vibe was too hip for me. ",
-      "createdAt": "2026-01-22T20:53:37.587Z"
+      "createdAt": "2026-01-22T21:03:45.153Z"
     },
     {
-      "sandwichId": "chubby-boys-chubby-boy-bfast-sando",
+      "sandwichId": "chubby-boys-chubby-boy-breakfast-sandwich",
       "userName": "Mick",
       "rating": 3,
       "comment": "Aside from the crunchy hashbrown, it was a very s o f t sandwich?? Loved the potato bun. Felt like the jalepenos couldve been a touch more spicy 🌶️ The line was insane; idk if it's worth the wait (if we hadn't gotten there earlier)",
-      "createdAt": "2026-01-22T20:53:37.587Z"
+      "createdAt": "2026-01-22T21:03:45.153Z"
     },
     {
-      "sandwichId": "loaf-lounge-sandwich-special-sweet-potato-bacon-pickled-jalepeno-hashbrown",
+      "sandwichId": "loaf-lounge-sandwich-special",
       "userName": "Bryan",
       "rating": 4,
       "comment": "Cortado was good, no comments. Hashbrown was light and crispy and not too greasy but could have used a bit of salt. Sandwich flavor was fantastic and the muffin was on point. However the sweet potato \"mush\" just kind of squeezed out of the sandwich. ",
-      "createdAt": "2026-01-22T20:53:37.588Z"
+      "createdAt": "2026-01-22T21:03:45.153Z"
     },
     {
       "sandwichId": "loaf-lounge-bacon-egg-sandwich",
       "userName": "Amber",
       "rating": 3,
       "comment": "The sandwich was good but nothing that would make me go back for it. The mayo was tasty but there wasn't enough of it. ",
-      "createdAt": "2026-01-22T20:53:37.588Z"
+      "createdAt": "2026-01-22T21:03:45.153Z"
     },
     {
-      "sandwichId": "loaf-lounge-english-muffin-sweet-potato-egg-bacon-pickled-jalape-o",
+      "sandwichId": "loaf-lounge-sandwich-special",
       "userName": "Jared",
       "rating": 3,
       "comment": "Good home made muff. Nice spice and zip from the pickle. Not a fan of the sweet potato. Too messy. ",
-      "createdAt": "2026-01-22T20:53:37.588Z"
+      "createdAt": "2026-01-22T21:03:45.153Z"
     },
     {
       "sandwichId": "loaf-lounge-veggie-egg-cheese-breakfast-sando",
       "userName": "Mick",
       "rating": 4,
       "comment": "For some reason was expecting a hashbrown ON the sandwich, but the kale & mushroom sauté redeemed it. Muff was soft! (lol)",
-      "createdAt": "2026-01-22T20:53:37.588Z"
+      "createdAt": "2026-01-22T21:03:45.153Z"
     },
     {
       "sandwichId": "nettare-breakfast-sandwich",
       "userName": "Bryan",
       "rating": 4,
       "comment": "The sandwich was very good. Solid balance of all the topings with a good bun and a very sturdy suffle egg. Coffee drink was weird but grew on me. The poptart was fantastic and I'd eat a whole one.",
-      "createdAt": "2026-01-22T20:53:37.589Z"
+      "createdAt": "2026-01-22T21:03:45.154Z"
     },
     {
-      "sandwichId": "spinning-j-spinning-j-sandwich-w-sausage-on-a-biscuit",
+      "sandwichId": "spinning-j-spinning-j-breakfast-sandwich",
       "userName": "Bryan",
       "rating": 5,
       "comment": "It was very straight forward but each part of the sandwich was spot on. The egg was firm and nicely seasoned, the sausage was sausagy but not overpowering, cheese added some good salt and umami, and the biscuit was stellar. ",
-      "createdAt": "2026-01-22T20:53:37.589Z"
+      "createdAt": "2026-01-22T21:03:45.154Z"
     },
     {
-      "sandwichId": "spinning-j-the-spinning-j-breakfast-sandwich",
+      "sandwichId": "spinning-j-spinning-j-breakfast-sandwich",
       "userName": "Mick",
       "rating": 4,
       "comment": "maybe my favorite bun so far?? homemade english muffin. no egg brick! i wish i'd ordered sausage for it and I do think it could benefit from some sort of sauce ... or jelly. but really fluffy and light and reminded me of an egg mcmuffin 🥹",
-      "createdAt": "2026-01-22T20:53:37.589Z"
+      "createdAt": "2026-01-22T21:03:45.154Z"
     },
     {
-      "sandwichId": "middle-brow--sausage-egg-sammy",
+      "sandwichId": "middle-brow--sausage-egg-sandwich",
       "userName": "Bryan",
       "rating": 2,
       "comment": "Lots of good parts didn't come together to make a better whole. Sausage was interesting but a bit much, more like a burger. Bun was good but too substantial. Kombucha jam was interesting and occassionally would get a bite where the jam, egg, and sausage would all blend well, but that didn't happen too often. Coffee was coffee. ",
-      "createdAt": "2026-01-22T20:53:37.590Z"
+      "createdAt": "2026-01-22T21:03:45.155Z"
     },
     {
-      "sandwichId": "middle-brow--sauasage-egg-sammy",
+      "sandwichId": "middle-brow--sausage-egg-sandwich",
       "userName": "Amber",
       "rating": 2,
       "comment": "Each of the pieces were good but together were a little confusing. ",
-      "createdAt": "2026-01-22T20:53:37.590Z"
+      "createdAt": "2026-01-22T21:03:45.155Z"
     },
     {
-      "sandwichId": "middle-brow--sausage-egg-sandwhich",
+      "sandwichId": "middle-brow--sausage-egg-sandwich",
       "userName": "Jared",
       "rating": 3,
       "comment": "good bun, seemed homemade. sausage favors were interesting, not typical breakfast sausagey. the jam really threw me off. i think they were going for a sweet and salty vibe that didnt land. the seasme bagel with basil cream cheese was great.",
-      "createdAt": "2026-01-22T20:53:37.590Z"
+      "createdAt": "2026-01-22T21:03:45.155Z"
     },
     {
       "sandwichId": "middle-brow--egg-cheese-sandwich",
       "userName": "Mick",
       "rating": 2,
       "comment": "Not a fan! The bun was too dry/meant for a burger. The egg could've been more soufflé-y, the onion jam overtook the flavors and I was REALLY looking forward to that togaroshi mayo. Was also just SO hot and overheating; thankful I ordered my latte iced lol\n\njust gonna stick to pizza here",
-      "createdAt": "2026-01-22T20:53:37.590Z"
+      "createdAt": "2026-01-22T21:03:45.155Z"
     }
   ]
 }

@@ -104,7 +104,26 @@ async function migrate() {
             if (!row.Order || !row.Rating) continue;
 
             const rawSandwichName = row.Order.trim();
-            const sandwichName = cleanSandwichName(rawSandwichName);
+            const diner = row.Diner || "";
+            let sandwichName = cleanSandwichName(rawSandwichName);
+
+            // --- Grouping Overrides ---
+            if (restaurantId === 'loaf-lounge') {
+                if (diner === 'Bryan' || diner === 'Jared') {
+                    sandwichName = "Sandwich Special";
+                }
+            } else if (restaurantId === 'chubby-boys') {
+                sandwichName = "Chubby Boy Breakfast Sandwich";
+            } else if (restaurantId === 'allez-caf-') {
+                sandwichName = "Allez Breakfast Sandwich";
+            } else if (restaurantId === 'middle-brow-') {
+                if (diner === 'Amber' || diner === 'Bryan' || diner === 'Jared') {
+                    sandwichName = "Sausage & Egg Sandwich";
+                }
+            } else if (restaurantId === 'spinning-j') {
+                sandwichName = "Spinning J Breakfast Sandwich";
+            }
+
             const sandwichId = `${restaurantId}-${sandwichName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
             // Add sandwich if not already present
