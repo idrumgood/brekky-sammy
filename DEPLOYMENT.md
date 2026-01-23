@@ -40,18 +40,29 @@ gcloud run deploy brekkysammy \
     NEXT_PUBLIC_FIREBASE_APP_ID=[YOUR_APP_ID]
   "
 ```
+## 3. Automated Deployment (CI/CD)
 
-## Environment Variables
+The project is configured for automated builds and deployments using **Google Cloud Build Triggers**.
 
-| Variable | Description |
-|----------|-------------|
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | Your Firebase Web API Key. |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Your Firebase Auth Domain. |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Your Google Cloud Project ID. |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Your Firebase Storage Bucket. |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Your Firebase Messaging Sender ID. |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | Your Firebase App ID. |
+### Setup Cloud Build Triggers
+
+1.  Navigate to the [Cloud Build Triggers page](https://console.cloud.google.com/cloud-build/triggers) in the Google Cloud Console.
+2.  Connect your GitHub repository (enable the Google Cloud Build GitHub App).
+3.  Create a new trigger:
+    -   **Name**: `deploy-main`
+    -   **Event**: Push to a branch
+    -   **Branch**: `^main$`
+    -   **Configuration**: Cloud Build configuration file (yaml or json)
+    -   **Cloud Build configuration file location**: `cloudbuild.yaml`
+4.  **Substitution Variables**: The `cloudbuild.yaml` requires the following variables to bake Firebase config into the build. Click **"ADD VARIABLE"** for each:
+    -   `_FIREBASE_API_KEY`
+    -   `_FIREBASE_AUTH_DOMAIN`
+    -   `_FIREBASE_PROJECT_ID`
+    -   `_FIREBASE_STORAGE_BUCKET`
+    -   `_FIREBASE_MESSAGING_SENDER_ID`
+    -   `_FIREBASE_APP_ID`
+
+Once configured, every merge to `main` will automatically trigger a new build and deployment to Cloud Run.
 
 ## Local Development vs. Production
-
-The `Dockerfile` uses the `standalone` output from Next.js for a lightweight production image. Ensure `output: 'standalone'` is set in `next.config.ts`.
+...
