@@ -1,9 +1,9 @@
 import { db } from "@/lib/firebase-admin";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { Star, MapPin, MessageSquare, Utensils, ArrowLeft, Clock, Info } from 'lucide-react';
 import ReviewCard from "@/components/ReviewCard";
+import ImageCarousel from "@/components/ImageCarousel";
 
 interface Restaurant {
     id: string;
@@ -28,6 +28,7 @@ interface Sandwich {
     reviewCount: number;
     ingredients?: string[];
     imageUrl?: string;
+    allPhotos?: string[];
     restaurant: Restaurant | null;
     reviews: Review[];
 }
@@ -71,7 +72,7 @@ export default async function SandwichDetailPage({
     }
 
     return (
-        <div className="max-w-6xl mx-auto pb-20">
+        <div className="max-w-6xl mx-auto pb-20 px-4 md:px-0">
             {/* Back Button */}
             <Link
                 href="/"
@@ -84,17 +85,13 @@ export default async function SandwichDetailPage({
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Image & Basic Info */}
                 <div className="lg:col-span-2 space-y-8">
-                    <div className="relative aspect-video rounded-3xl overflow-hidden shadow-xl border-4 border-white">
-                        <Image
-                            src={sandwich.imageUrl || "https://images.unsplash.com/photo-1550507992-eb63ffee0847?auto=format&fit=crop&q=80&w=2070"}
+                    <div className="relative">
+                        <ImageCarousel
+                            images={sandwich.allPhotos || (sandwich.imageUrl ? [sandwich.imageUrl] : [])}
                             alt={sandwich.name}
-                            fill
-                            className="object-cover"
-                            priority
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
-                            <div>
+                        <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between pointer-events-none">
+                            <div className="pointer-events-auto">
                                 <h1 className="text-4xl font-extrabold text-white mb-2 drop-shadow-md">
                                     {sandwich.name}
                                 </h1>
@@ -110,6 +107,14 @@ export default async function SandwichDetailPage({
                                     </div>
                                 </div>
                             </div>
+
+                            <Link
+                                href={`/submit?restaurantId=${sandwich.restaurantId}&sandwichId=${sandwich.id}`}
+                                className="bg-primary text-white px-6 py-3 rounded-2xl font-black shadow-lg hover:scale-105 transition-transform flex items-center gap-2 pointer-events-auto"
+                            >
+                                <Star size={20} className="fill-white" />
+                                Rate This
+                            </Link>
                         </div>
                     </div>
 

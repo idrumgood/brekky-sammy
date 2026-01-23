@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Search, User, Coffee, LogOut, ShieldAlert } from 'lucide-react';
+import { Search, User, Coffee, LogOut, ShieldAlert, Plus } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 
 export default function Navbar() {
@@ -43,6 +43,14 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
+                <Link
+                    href="/submit"
+                    className="hidden lg:flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-full font-black text-sm hover:scale-[1.05] transition-transform shadow-lg active:scale-95"
+                >
+                    <Plus size={18} />
+                    Rate a Sammy
+                </Link>
+
                 {user ? (
                     <div className="flex items-center gap-3">
                         <Link href="/profile" className="flex items-center gap-3 hover:bg-secondary rounded-full pl-3 pr-1 py-1 transition-colors">
