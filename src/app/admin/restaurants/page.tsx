@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { collection, getDocs, doc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { deleteRestaurantCascading } from '@/lib/admin';
 import { Trash2, Store, Loader2, Globe, MapPin, Search, ArrowUpRight, Plus } from 'lucide-react';
 import Link from 'next/link';
 
@@ -35,11 +36,11 @@ export default function RestaurantsAdmin() {
     }, []);
 
     const handleDelete = async (id: string, name: string) => {
-        if (!confirm(`Are you sure you want to delete "${name}"? This action is high-risk as it doesn't automatically cleanup sandwich entries.`)) return;
+        if (!confirm(`Are you sure you want to delete "${name}"? This will also permanently delete all associated sandwiches and reviews.`)) return;
 
         setDeleting(id);
         try {
-            await deleteDoc(doc(db, 'restaurants', id));
+            await deleteRestaurantCascading(id);
             setRestaurants(prev => prev.filter(r => r.id !== id));
         } catch (error) {
             console.error("Error deleting restaurant:", error);

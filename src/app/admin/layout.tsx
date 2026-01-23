@@ -52,6 +52,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { label: 'Overview', href: '/admin', icon: LayoutDashboard },
         { label: 'Users', href: '/admin/users', icon: Users },
         { label: 'Restaurants', href: '/admin/restaurants', icon: Store },
+        { label: 'Sandwiches', href: '/admin/sandwiches', icon: List },
         { label: 'Reviews', href: '/admin/reviews', icon: MessageSquare },
         { label: 'Ingredients', href: '/admin/ingredients', icon: List },
     ];
@@ -78,8 +79,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                         key={item.href}
                                         href={item.href}
                                         className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all font-medium ${isActive
-                                                ? 'bg-primary text-primary-foreground shadow-md scale-[1.02]'
-                                                : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                                            ? 'bg-primary text-primary-foreground shadow-md scale-[1.02]'
+                                            : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
                                             }`}
                                     >
                                         <Icon size={18} />
