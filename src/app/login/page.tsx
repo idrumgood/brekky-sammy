@@ -12,6 +12,7 @@ import {
 import { auth } from '@/lib/firebase';
 import { useAuth } from '@/lib/AuthContext';
 import { useRouter } from 'next/navigation';
+import { db } from '@/lib/firebase';
 import { Mail, Lock, Chrome, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function LoginPage() {
