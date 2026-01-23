@@ -45,22 +45,24 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
                 {user ? (
                     <div className="flex items-center gap-3">
-                        <div className="flex flex-col items-end hidden md:flex">
-                            <span className="text-sm font-semibold leading-none">{user.displayName || user.email?.split('@')[0]}</span>
-                            {!isVerified && (
-                                <span className="text-[10px] text-destructive font-bold flex items-center gap-0.5 mt-0.5">
-                                    <ShieldAlert size={10} />
-                                    UNVERIFIED
-                                </span>
-                            )}
-                        </div>
-                        {user.photoURL ? (
-                            <img src={user.photoURL} alt="Profile" className="w-9 h-9 rounded-full border border-border" />
-                        ) : (
-                            <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-                                {(user.displayName || user.email)?.[0].toUpperCase()}
+                        <Link href="/profile" className="flex items-center gap-3 hover:bg-secondary rounded-full pl-3 pr-1 py-1 transition-colors">
+                            <div className="flex flex-col items-end hidden md:flex">
+                                <span className="text-sm font-semibold leading-none">{user.displayName || user.email?.split('@')[0]}</span>
+                                {!isVerified && (
+                                    <span className="text-[10px] text-destructive font-bold flex items-center gap-0.5 mt-0.5">
+                                        <ShieldAlert size={10} />
+                                        UNVERIFIED
+                                    </span>
+                                )}
                             </div>
-                        )}
+                            {user.photoURL ? (
+                                <img src={user.photoURL} alt="Profile" className="w-9 h-9 rounded-full border border-border" />
+                            ) : (
+                                <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                                    {(user.displayName || user.email)?.[0].toUpperCase()}
+                                </div>
+                            )}
+                        </Link>
                         <button
                             onClick={() => signOut()}
                             className="p-2 hover:bg-destructive/10 hover:text-destructive rounded-full transition-colors group relative"
