@@ -1,4 +1,7 @@
 import { db } from "@/lib/firebase-admin";
+
+export const dynamic = "force-dynamic";
+
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Star, MapPin, MessageSquare, Utensils, ArrowLeft, Clock, Info } from 'lucide-react';

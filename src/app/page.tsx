@@ -2,6 +2,8 @@ import Hero from "@/components/Hero";
 import SandwichCard from "@/components/SandwichCard";
 import { db } from "@/lib/firebase-admin";
 
+export const dynamic = "force-dynamic";
+
 async function getFeaturedSandwiches() {
   const sandwichesSnap = await db.collection("sandwiches")
     .orderBy("averageRating", "desc")
