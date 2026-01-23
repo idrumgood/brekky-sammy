@@ -21,7 +21,7 @@ export default function AboutPage() {
                     <h2 className="text-2xl font-black tracking-tight text-breakfast-coffee uppercase">The Creator</h2>
                     <div className="flex flex-col md:flex-row gap-8 items-center bg-secondary/30 p-8 rounded-3xl border border-border/50">
                         <img
-                            src="https://i1.sndcdn.com/avatars-0eaY35AYs2cs3wgT-b4z52A-t500x500.jpg"
+                            src="/images/bryan-dunk.jpg"
                             alt="Bryan Dunk"
                             className="w-32 h-32 rounded-[2rem] border-4 border-white shadow-xl shadow-primary/10"
                         />
