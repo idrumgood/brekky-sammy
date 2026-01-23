@@ -40,11 +40,25 @@ gcloud run deploy brekkysammy \
     NEXT_PUBLIC_FIREBASE_APP_ID=[YOUR_APP_ID]
   "
 ```
-## 3. Automated Deployment (CI/CD)
+### Preparation: Artifact Registry & Permissions
 
-The project is configured for automated builds and deployments using **Google Cloud Build Triggers**.
+Before the trigger can succeed, you need to create the repository and grant permissions to the identity performing the build:
+
+1.  **Create Artifact Registry Repository**:
+    ```bash
+    gcloud artifacts repositories create brekkysammy \
+      --repository-format=docker \
+      --location=us-central1 \
+      --description="Docker repository for BrekkySammy"
+    ```
+2.  **Grant Permissions**:
+    The service account mentioned in your build error (e.g., `brekkysammy-sa@brekkysammy.iam.gserviceaccount.com` OR your default `[PROJECT_NUMBER]@cloudbuild.gserviceaccount.com`) needs these roles:
+    -   **Artifact Registry Writer**: To push the built image.
+    -   **Cloud Run Admin**: To deploy/update the service.
+    -   **Service Account User**: To "act as" the runtime service account during deployment.
 
 ### Setup Cloud Build Triggers
+...
 
 1.  Navigate to the [Cloud Build Triggers page](https://console.cloud.google.com/cloud-build/triggers) in the Google Cloud Console.
 2.  Connect your GitHub repository (enable the Google Cloud Build GitHub App).
