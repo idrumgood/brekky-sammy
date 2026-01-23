@@ -1,8 +1,8 @@
 # BrekkySammy TODOs
 
 ## 🔐 Authentication & Users
-- [ ] Implement Firebase Authentication (Email/Password)
-- [ ] Integrate Google One Tap / Google Login
+- [x] Implement Firebase Authentication (Email/Password)
+- [x] Integrate Google One Tap / Google Login
 - [ ] Create user profile pages (to track personal "Sammy" history)
 - [ ] Implement protected routes for review submission
 
