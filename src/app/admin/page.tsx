@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Users, Store, MessageSquare, Plus, ArrowUpRight, Activity } from 'lucide-react';
+import { Users, Store, MessageSquare, Plus, ArrowUpRight, Activity, List } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState({
         users: 0,
         restaurants: 0,
+        sandwiches: 0,
         reviews: 0,
         ingredients: 0
     });
@@ -19,9 +20,10 @@ export default function AdminDashboard() {
         async function fetchStats() {
             try {
                 // Fetching all docs for small datasets is fine
-                const [usersSnap, restaurantsSnap, reviewsSnap, ingredientsSnap] = await Promise.all([
+                const [usersSnap, restaurantsSnap, sandwichesSnap, reviewsSnap, ingredientsSnap] = await Promise.all([
                     getDocs(collection(db, 'users')),
                     getDocs(collection(db, 'restaurants')),
+                    getDocs(collection(db, 'sandwiches')),
                     getDocs(collection(db, 'reviews')),
                     getDocs(collection(db, 'ingredients'))
                 ]);
@@ -29,6 +31,7 @@ export default function AdminDashboard() {
                 setStats({
                     users: usersSnap.size,
                     restaurants: restaurantsSnap.size,
+                    sandwiches: sandwichesSnap.size,
                     reviews: reviewsSnap.size,
                     ingredients: ingredientsSnap.size
                 });
@@ -44,6 +47,7 @@ export default function AdminDashboard() {
     const cards = [
         { label: 'Total Users', value: stats.users, icon: Users, color: 'bg-indigo-500', href: '/admin/users' },
         { label: 'Restaurants', value: stats.restaurants, icon: Store, color: 'bg-amber-500', href: '/admin/restaurants' },
+        { label: 'Sandwiches', value: stats.sandwiches, icon: List, color: 'bg-blue-500', href: '/admin/sandwiches' },
         { label: 'Total Reviews', value: stats.reviews, icon: MessageSquare, color: 'bg-emerald-500', href: '/admin/reviews' },
         { label: 'Ingredients', value: stats.ingredients, icon: Plus, color: 'bg-rose-500', href: '/admin/ingredients' },
     ];
@@ -129,6 +133,9 @@ export default function AdminDashboard() {
                         </Link>
                         <Link href="/admin/restaurants" className="block w-full text-left p-4 bg-secondary/50 rounded-2xl hover:bg-secondary transition-all font-bold text-sm border border-border/50">
                             Moderate Restaurants
+                        </Link>
+                        <Link href="/admin/sandwiches" className="block w-full text-left p-4 bg-secondary/50 rounded-2xl hover:bg-secondary transition-all font-bold text-sm border border-border/50">
+                            Prune Sandwiches
                         </Link>
                         <Link href="/admin/ingredients" className="block w-full text-left p-4 bg-secondary/50 rounded-2xl hover:bg-secondary transition-all font-bold text-sm border border-border/50">
                             Clean Ingredients
