@@ -46,6 +46,7 @@ export default function ReviewForm() {
 
     const [selectedRestaurantId, setSelectedRestaurantId] = useState('');
     const [newRestaurantName, setNewRestaurantName] = useState('');
+    const [newRestaurantWebsite, setNewRestaurantWebsite] = useState(''); // Added
     const [selectedSandwichId, setSelectedSandwichId] = useState('');
     const [newSandwichName, setNewSandwichName] = useState('');
 
@@ -54,6 +55,7 @@ export default function ReviewForm() {
     const [comment, setComment] = useState('');
     const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
     const [newIngredient, setNewIngredient] = useState('');
+    const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1); // Added
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -122,6 +124,7 @@ export default function ReviewForm() {
                 ingredients: selectedIngredients,
                 imageFile: imageFile || undefined,
                 newRestaurantName: selectedRestaurantId === 'new' ? newRestaurantName : undefined,
+                newRestaurantWebsite: selectedRestaurantId === 'new' ? newRestaurantWebsite : undefined, // Added
                 newSandwichName: selectedSandwichId === 'new' ? newSandwichName : undefined,
             });
             router.push('/profile');
@@ -168,13 +171,22 @@ export default function ReviewForm() {
                                 </select>
 
                                 {selectedRestaurantId === 'new' && (
-                                    <input
-                                        type="text"
-                                        placeholder="Restaurant Name"
-                                        className="w-full bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium mt-2"
-                                        value={newRestaurantName}
-                                        onChange={(e) => setNewRestaurantName(e.target.value)}
-                                    />
+                                    <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Restaurant Name"
+                                            className="w-full bg-secondary border border-border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-breakfast-coffee placeholder:text-muted-foreground/50"
+                                            value={newRestaurantName}
+                                            onChange={(e) => setNewRestaurantName(e.target.value)}
+                                        />
+                                        <input
+                                            type="url"
+                                            placeholder="Website URL (Optional)"
+                                            className="w-full bg-secondary border border-border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium text-breakfast-coffee placeholder:text-muted-foreground/50"
+                                            value={newRestaurantWebsite}
+                                            onChange={(e) => setNewRestaurantWebsite(e.target.value)}
+                                        />
+                                    </div>
                                 )}
                             </div>
 
@@ -198,7 +210,7 @@ export default function ReviewForm() {
                                         <input
                                             type="text"
                                             placeholder="Sandwich Name (e.g. 'The Classic B.E.C')"
-                                            className="w-full bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium mt-2"
+                                            className="w-full bg-secondary border border-border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-breakfast-coffee placeholder:text-muted-foreground/50"
                                             value={newSandwichName}
                                             onChange={(e) => setNewSandwichName(e.target.value)}
                                         />
@@ -264,33 +276,81 @@ export default function ReviewForm() {
                                         </span>
                                     ))}
                                 </div>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        placeholder="Add ingredient (e.g. Latke, Miso Mayo)"
-                                        className="flex-1 bg-secondary/50 border border-border rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                                        value={newIngredient}
-                                        onChange={(e) => setNewIngredient(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addIngredient(newIngredient))}
-                                    />
-                                    <button
-                                        onClick={() => addIngredient(newIngredient)}
-                                        className="bg-secondary p-2 rounded-xl text-primary hover:bg-secondary/80 transition-colors"
-                                    >
-                                        <Plus size={24} />
-                                    </button>
-                                </div>
-                                <div className="flex flex-wrap gap-1.5 mt-2">
-                                    <span className="text-xs text-muted-foreground uppercase font-bold mr-2">Suggestions:</span>
-                                    {globalIngredients.filter(i => !selectedIngredients.includes(i)).slice(0, 10).map(ing => (
+                                <div className="relative">
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Add ingredient (e.g. Latke, Miso Mayo)"
+                                            className="flex-1 bg-secondary border border-border rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-breakfast-coffee placeholder:text-muted-foreground/50"
+                                            value={newIngredient}
+                                            onChange={(e) => {
+                                                setNewIngredient(e.target.value);
+                                                setActiveSuggestionIndex(-1);
+                                            }}
+                                            onKeyDown={(e) => {
+                                                const suggestions = globalIngredients.filter(i =>
+                                                    i.toLowerCase().includes(newIngredient.toLowerCase()) &&
+                                                    !selectedIngredients.includes(i)
+                                                ).slice(0, 5);
+
+                                                if (e.key === 'ArrowDown') {
+                                                    setActiveSuggestionIndex(prev => Math.min(prev + 1, suggestions.length - 1));
+                                                } else if (e.key === 'ArrowUp') {
+                                                    setActiveSuggestionIndex(prev => Math.max(prev - 1, -1));
+                                                } else if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    if (activeSuggestionIndex >= 0) {
+                                                        addIngredient(suggestions[activeSuggestionIndex]);
+                                                    } else {
+                                                        addIngredient(newIngredient);
+                                                    }
+                                                }
+                                            }}
+                                        />
                                         <button
-                                            key={ing}
-                                            onClick={() => addIngredient(ing)}
-                                            className="text-xs bg-secondary/30 hover:bg-secondary border border-border rounded-lg px-2 py-1 text-muted-foreground transition-all"
+                                            onClick={() => addIngredient(newIngredient)}
+                                            className="bg-secondary p-2 rounded-xl text-primary hover:bg-secondary/80 transition-colors"
                                         >
-                                            {ing}
+                                            <Plus size={24} />
                                         </button>
-                                    ))}
+                                    </div>
+
+                                    {/* Type-ahead Dropdown */}
+                                    {newIngredient.length > 0 && (
+                                        <div className="absolute z-50 w-full mt-1 bg-white border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-1">
+                                            {globalIngredients
+                                                .filter(i => i.toLowerCase().includes(newIngredient.toLowerCase()) && !selectedIngredients.includes(i))
+                                                .slice(0, 5)
+                                                .map((ing, idx) => (
+                                                    <button
+                                                        key={ing}
+                                                        onClick={() => addIngredient(ing)}
+                                                        className={`w-full text-left px-4 py-2 text-sm font-medium transition-colors ${idx === activeSuggestionIndex ? 'bg-primary text-white' : 'hover:bg-secondary text-breakfast-coffee'}`}
+                                                    >
+                                                        {ing}
+                                                    </button>
+                                                ))
+                                            }
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Quick Suggestions */}
+                                <div className="flex flex-wrap gap-1.5 mt-2">
+                                    <span className="text-xs text-muted-foreground uppercase font-black mr-2 self-center">Quick Add:</span>
+                                    {globalIngredients
+                                        .filter(i => !selectedIngredients.includes(i))
+                                        .slice(0, 8)
+                                        .map(ing => (
+                                            <button
+                                                key={ing}
+                                                onClick={() => addIngredient(ing)}
+                                                className="text-xs bg-secondary hover:bg-breakfast-gold/20 border border-border rounded-lg px-2.5 py-1.5 text-breakfast-coffee font-bold transition-all"
+                                            >
+                                                {ing}
+                                            </button>
+                                        ))
+                                    }
                                 </div>
                             </div>
                         </div>

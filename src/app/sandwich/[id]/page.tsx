@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Star, MapPin, MessageSquare, Utensils, ArrowLeft, Clock, Info } from 'lucide-react';
 import ReviewCard from "@/components/ReviewCard";
 import ImageCarousel from "@/components/ImageCarousel";
+import EditRestaurantModal from "@/components/EditRestaurantModal";
 
 interface Restaurant {
     id: string;
@@ -44,17 +45,36 @@ async function getSandwichData(id: string): Promise<Sandwich | null> {
     const restaurantData = restaurantDoc.exists ? restaurantDoc.data() as any : null;
 
     const reviewsSnap = await db.collection("reviews").where("sandwichId", "==", id).get();
-    const reviews = reviewsSnap.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-    })) as Review[];
+    const reviews = reviewsSnap.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toISOString?.() || data.createdAt || null
+        };
+    }) as Review[];
 
     reviews.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
+    // Sanitize objects to remove non-plain fields (like Firestore Timestamps)
+    const sanitize = (obj: any) => {
+        if (!obj) return null;
+        const newObj = { ...obj };
+        for (const [key, value] of Object.entries(newObj)) {
+            if (value && typeof value === 'object' && 'toDate' in (value as any)) {
+                newObj[key] = (value as any).toDate().toISOString();
+            } else if (value && typeof value === 'object' && '_seconds' in (value as any)) {
+                // Handle case where it might already be partially serialized but still not a "plain object" according to Next.js
+                newObj[key] = new Date((value as any)._seconds * 1000).toISOString();
+            }
+        }
+        return newObj;
+    };
+
     return {
         id: sandwichDoc.id,
-        ...sandwichData,
-        restaurant: restaurantData ? { id: restaurantDoc.id, ...restaurantData } : null,
+        ...sanitize(sandwichData),
+        restaurant: restaurantData ? { id: restaurantDoc.id, ...sanitize(restaurantData) } : null,
         reviews,
     };
 }
@@ -182,9 +202,12 @@ export default async function SandwichDetailPage({
                     </div>
                 </div>
 
+
+
                 {/* Right Column: Restaurant Sidebar */}
                 <div className="space-y-6">
-                    <div className="bg-breakfast-coffee text-white rounded-3xl p-8 sticky top-24">
+                    <div className="bg-breakfast-coffee text-white rounded-3xl p-8 sticky top-24 relative group">
+                        {sandwich.restaurant && <EditRestaurantModal restaurant={sandwich.restaurant} />}
                         <h3 className="text-xl font-bold mb-6">About the Restaurant</h3>
 
                         <div className="space-y-6">

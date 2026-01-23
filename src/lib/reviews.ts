@@ -20,6 +20,7 @@ interface ReviewInput {
     imageFile?: File;
     // For new restaurants/sandwiches
     newRestaurantName?: string;
+    newRestaurantWebsite?: string; // Added
     newSandwichName?: string;
 }
 
@@ -46,6 +47,7 @@ export async function createReview(input: ReviewInput) {
             finalRestaurantId = restaurantRef.id;
             transaction.set(restaurantRef, {
                 name: input.newRestaurantName,
+                website: input.newRestaurantWebsite || null, // Added
                 location: 'Chicago, IL', // Default for now
                 createdAt: serverTimestamp()
             });
