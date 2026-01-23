@@ -1,5 +1,8 @@
 import SandwichCard from "@/components/SandwichCard";
 import { db } from "@/lib/firebase-admin";
+
+export const dynamic = "force-dynamic";
+
 import { Search as SearchIcon } from 'lucide-react';
 
 async function searchSandwiches(query: string) {
