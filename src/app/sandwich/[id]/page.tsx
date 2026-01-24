@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Star, MapPin, MessageSquare, Utensils, ArrowLeft, Clock, Info } from 'lucide-react';
+import { Star, MapPin, MessageSquare, Utensils, ArrowLeft, Info, ChevronRight } from 'lucide-react';
 import ReviewCard from "@/components/ReviewCard";
 import ImageCarousel from "@/components/ImageCarousel";
 import EditRestaurantModal from "@/components/EditRestaurantModal";
@@ -39,6 +39,7 @@ interface Sandwich {
     allPhotos?: string[];
     restaurant: Restaurant | null;
     reviews: Review[];
+    otherSandwiches: any[];
 }
 
 async function getSandwichData(id: string): Promise<Sandwich | null> {
@@ -51,7 +52,15 @@ async function getSandwichData(id: string): Promise<Sandwich | null> {
     const restaurantDoc = await db.collection("restaurants").doc(sandwichData.restaurantId).get();
     const restaurantData = restaurantDoc.exists ? restaurantDoc.data() as any : null;
 
-    const reviewsSnap = await db.collection("reviews").where("sandwichId", "==", id).get();
+    const [reviewsSnap, otherSandwichesSnap] = await Promise.all([
+        db.collection("reviews").where("sandwichId", "==", id).get(),
+        db.collection("sandwiches")
+            .where("restaurantId", "==", sandwichData.restaurantId)
+            .where("__name__", "!=", id)
+            .limit(5)
+            .get()
+    ]);
+
     const reviews = reviewsSnap.docs.map(doc => {
         const data = doc.data();
         return {
@@ -74,18 +83,23 @@ async function getSandwichData(id: string): Promise<Sandwich | null> {
             if (value && typeof value === 'object' && 'toDate' in (value as any)) {
                 newObj[key] = (value as any).toDate().toISOString();
             } else if (value && typeof value === 'object' && '_seconds' in (value as any)) {
-                // Handle case where it might already be partially serialized but still not a "plain object" according to Next.js
                 newObj[key] = new Date((value as any)._seconds * 1000).toISOString();
             }
         }
         return newObj;
     };
 
+    const otherSandwiches = otherSandwichesSnap.docs.map(doc => sanitize({
+        id: doc.id,
+        ...doc.data()
+    }));
+
     return {
         id: sandwichDoc.id,
         ...sanitize(sandwichData),
         restaurant: restaurantData ? { id: restaurantDoc.id, ...sanitize(restaurantData) } : null,
         reviews,
+        otherSandwiches,
     };
 }
 
@@ -105,11 +119,11 @@ export default async function SandwichDetailPage({
         <div className="max-w-6xl mx-auto pb-20 px-4 md:px-0">
             {/* Back Button */}
             <Link
-                href="/"
+                href="/search"
                 className="inline-flex items-center gap-2 text-muted-foreground hover:text-breakfast-coffee transition-colors mb-6 group"
             >
                 <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                Back to all sammies
+                Back to all sammys
             </Link>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -152,7 +166,7 @@ export default async function SandwichDetailPage({
                     <div className="bg-white rounded-3xl p-8 shadow-sm border border-border">
                         <h2 className="text-2xl font-bold text-breakfast-coffee mb-6 flex items-center gap-2">
                             <Info className="text-primary" />
-                            Sammie Details
+                            Sammy Details
                         </h2>
 
                         <div className="space-y-6 text-muted-foreground leading-relaxed">
@@ -206,7 +220,7 @@ export default async function SandwichDetailPage({
                                 ))
                             ) : (
                                 <div className="col-span-full py-12 text-center bg-secondary/20 rounded-2xl border-2 border-dashed border-border">
-                                    <p className="text-muted-foreground">No reviews yet for this sammie.</p>
+                                    <p className="text-muted-foreground">No reviews yet for this sammy.</p>
                                 </div>
                             )}
                         </div>
@@ -252,22 +266,40 @@ export default async function SandwichDetailPage({
                                 </a>
                             )}
 
-                            <hr className="border-white/10" />
-
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center gap-2 text-white/70">
-                                        <Clock size={16} />
-                                        <span>Sunday Brunch Club</span>
-                                    </div>
-                                    <span className="text-breakfast-egg font-bold">Member</span>
-                                </div>
-                                <p className="text-xs text-white/60 italic leading-relaxed">
-                                    This restaurant has been vetted and rated by our community of breakfast sandwich enthusiasts.
-                                </p>
-                            </div>
                         </div>
                     </div>
+
+                    {sandwich.otherSandwiches && sandwich.otherSandwiches.length > 0 && (
+                        <div className="bg-white rounded-3xl p-8 shadow-sm border border-border">
+                            <h3 className="text-xl font-bold text-breakfast-coffee mb-6 flex items-center gap-2">
+                                <Utensils className="text-primary" size={20} />
+                                Other Offerings
+                            </h3>
+                            <div className="space-y-4">
+                                {sandwich.otherSandwiches.map((other) => (
+                                    <Link
+                                        key={other.id}
+                                        href={`/sandwich/${other.id}`}
+                                        className="group block p-4 bg-secondary/30 hover:bg-primary/5 rounded-2xl border border-transparent hover:border-primary/20 transition-all"
+                                    >
+                                        <div className="flex items-center justify-between gap-3">
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-bold text-breakfast-coffee truncate group-hover:text-primary transition-colors">
+                                                    {other.name}
+                                                </h4>
+                                                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                                                    <Star size={12} className="text-breakfast-egg fill-breakfast-egg" />
+                                                    <span className="font-bold">{other.averageRating?.toFixed(1) || "N/A"}</span>
+                                                    <span>• {other.reviewCount || 0} reviews</span>
+                                                </div>
+                                            </div>
+                                            <ChevronRight size={18} className="text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

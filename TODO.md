@@ -9,7 +9,7 @@
 - [x] Implement protected routes for review submission
 
 ## 🍳 Review Submission flow
-- [x] Design and build the "Rate a Sammie" multi-step form
+- [x] Design and build the "Rate a Sammy" multi-step form
 - [x] Integrate Firebase Storage for photo uploads during reviews
 - [x] Add ability to tag specific ingredients used in the sandwich
 - [ ] Implement "Edit Review" functionality for users

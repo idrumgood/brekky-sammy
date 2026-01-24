@@ -97,7 +97,7 @@ export default function LoginPage() {
                     {user && !isVerified
                         ? "Check your inbox to activate your account."
                         : isLogin
-                            ? "Sign in to rate your favorite breakfast sammies."
+                            ? "Sign in to rate your favorite breakfast sammys."
                             : "Create an account to start your sandwich journey."}
                 </p>
             </div>

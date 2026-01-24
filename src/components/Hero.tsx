@@ -16,21 +16,13 @@ export default function Hero() {
     };
 
     return (
-        <section className="relative overflow-hidden rounded-3xl bg-breakfast-cream py-16 px-8 mb-12 hero-gradient shadow-2xl">
+        <section className="relative overflow-hidden rounded-3xl bg-breakfast-cream py-10 px-8 mb-12 hero-gradient shadow-2xl">
             <div className="relative z-10 max-w-2xl mx-auto text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-6 animate-fade-in">
-                    <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                    </span>
-                    The Sunday Brunch Club
-                </div>
-
-                <h1 className="text-5xl md:text-7xl font-extrabold text-breakfast-coffee leading-tight mb-6">
+                <h1 className="text-4xl md:text-6xl font-extrabold text-breakfast-coffee leading-tight mb-6 tracking-tighter">
                     Find your next favorite <span className="text-primary italic underline decoration-primary/30">sammy.</span>
                 </h1>
 
-                <p className="text-lg text-muted-foreground mb-10 max-w-lg mx-auto">
+                <p className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto italic font-medium">
                     The official rating guide for our informal breakfast club. We find the eggs, you eat the sandwiches.
                 </p>
 
