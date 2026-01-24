@@ -26,6 +26,24 @@ interface Restaurant {
     website?: string;
 }
 
+function MapBoundsHandler({ restaurants }: { restaurants: Restaurant[] }) {
+    const map = useMap();
+
+    useEffect(() => {
+        if (restaurants.length === 0) return;
+
+        const bounds = L.latLngBounds(restaurants.map(r => [r.lat!, r.lng!] as [number, number]));
+
+        if (restaurants.length === 1) {
+            map.setView(bounds.getCenter(), 15);
+        } else {
+            map.fitBounds(bounds, { padding: [50, 50], animate: true });
+        }
+    }, [map, restaurants]);
+
+    return null;
+}
+
 function MapResizeHandler() {
     const map = useMap();
     useEffect(() => {
@@ -56,6 +74,7 @@ export default function MapComponent({ restaurants }: { restaurants: Restaurant[
             scrollWheelZoom={true}
         >
             <MapResizeHandler />
+            <MapBoundsHandler restaurants={restaurantsWithCoords} />
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
                 url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
