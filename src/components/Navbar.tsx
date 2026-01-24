@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Search, User, Coffee, LogOut, ShieldAlert, Plus, LayoutDashboard } from 'lucide-react';
+import { Search, User, Coffee, LogOut, ShieldAlert, Plus, LayoutDashboard, MapPin } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 
 export default function Navbar() {
@@ -43,6 +43,15 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
+                <Link
+                    href="/map"
+                    className="p-2.5 hover:bg-secondary rounded-full transition-colors group relative"
+                    title="Survey the Map"
+                >
+                    <MapPin size={20} />
+                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Map Room</span>
+                </Link>
+
                 <Link
                     href="/submit"
                     className="flex items-center gap-2 bg-primary text-white p-2.5 md:px-5 md:py-2.5 rounded-full font-black text-sm hover:scale-[1.05] transition-transform shadow-lg active:scale-95"

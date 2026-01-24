@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
 @theme inline {
   --color-breakfast-amber: #f59e0b;
@@ -88,6 +89,11 @@
   }
 }
 
+html,
+body {
+  min-height: 100vh;
+}
+
 .glassmorphism {
   @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-lg;
 }
@@ -99,4 +105,25 @@
 .hero-gradient {
   background: radial-gradient(circle at top left, #f59e0b 0%, transparent 40%),
     radial-gradient(circle at bottom right, #fbbf24 0%, transparent 40%);
+}
+
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 500px;
+  z-index: 1;
+}
+
+/* Custom scrollbar for the modal */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #fde68a;
+  border-radius: 10px;
 }
