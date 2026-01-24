@@ -21,6 +21,7 @@ interface Restaurant {
 
 interface Review {
     id: string;
+    userId: string;
     userName: string;
     rating: number;
     comment: string;
@@ -55,7 +56,10 @@ async function getSandwichData(id: string): Promise<Sandwich | null> {
         const data = doc.data();
         return {
             id: doc.id,
-            ...data,
+            userId: data.userId,
+            userName: data.userName,
+            rating: data.rating,
+            comment: data.comment,
             createdAt: data.createdAt?.toISOString?.() || data.createdAt || null
         };
     }) as Review[];
@@ -193,6 +197,7 @@ export default async function SandwichDetailPage({
                                 sandwich.reviews.map((review: any) => (
                                     <ReviewCard
                                         key={review.id}
+                                        userId={review.userId}
                                         userName={review.userName}
                                         rating={review.rating}
                                         comment={review.comment}
