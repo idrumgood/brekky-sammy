@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
@@ -12,9 +12,11 @@ import {
     getDoc,
     doc
 } from 'firebase/firestore';
-import { Loader2, Calendar, Utensils, Star, MapPin, ChevronRight, MessageSquare } from 'lucide-react';
+import { Loader2, Calendar, Star, MapPin, MessageSquare, Edit3, Save, X, Camera, Check } from 'lucide-react';
 import Link from 'next/link';
 import ProfileStats from '@/components/ProfileStats';
+import ReviewCard from '@/components/ReviewCard';
+import { getUserProfile, updateUserProfile, uploadAvatar, UserProfile } from '@/lib/users';
 
 interface Review {
     id: string;
@@ -30,7 +32,20 @@ export default function ProfilePage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
     const [reviews, setReviews] = useState<Review[]>([]);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // Edit state
+    const [isEditing, setIsEditing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [formData, setFormData] = useState({
+        displayName: '',
+        location: '',
+        bio: ''
+    });
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -39,9 +54,34 @@ export default function ProfilePage() {
         }
 
         if (user) {
-            fetchUserReviews();
+            fetchInitialData();
         }
     }, [user, authLoading]);
+
+    const fetchInitialData = async () => {
+        setLoading(true);
+        try {
+            await Promise.all([
+                fetchUserReviews(),
+                fetchUserProfile()
+            ]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchUserProfile = async () => {
+        if (!user) return;
+        const profileData = await getUserProfile(user.uid);
+        if (profileData) {
+            setProfile(profileData);
+            setFormData({
+                displayName: profileData.displayName || user.displayName || '',
+                location: profileData.location || 'Chicago, IL',
+                bio: profileData.bio || ''
+            });
+        }
+    };
 
     const fetchUserReviews = async () => {
         try {
@@ -78,8 +118,51 @@ export default function ProfilePage() {
             setReviews(reviewsData);
         } catch (error) {
             console.error('Error fetching user reviews:', error);
+        }
+    };
+
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setAvatarFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatarPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSaveProfile = async () => {
+        if (!user) return;
+        setIsSaving(true);
+        try {
+            let photoURL = profile?.photoURL || user.photoURL || '';
+
+            if (avatarFile) {
+                photoURL = await uploadAvatar(user.uid, avatarFile);
+            }
+
+            await updateUserProfile(user.uid, {
+                displayName: formData.displayName,
+                location: formData.location,
+                bio: formData.bio,
+                photoURL
+            });
+
+            // Refresh data
+            await fetchUserProfile();
+            setIsEditing(false);
+            setAvatarFile(null);
+            setAvatarPreview(null);
+
+            // Note: useAuth might still show old displayName/photoURL until refresh
+            // This is a known limitation of client-side auth state vs Firestore
+        } catch (error) {
+            console.error('Error saving profile:', error);
+            alert('Failed to save profile. Please try again.');
         } finally {
-            setLoading(false);
+            setIsSaving(false);
         }
     };
 
@@ -96,37 +179,145 @@ export default function ProfilePage() {
         ? reviews.reduce((acc, rev) => acc + rev.rating, 0) / reviews.length
         : 0;
 
+    const displayName = profile?.displayName || user?.displayName || user?.email?.split('@')[0] || 'Scout';
+
     return (
-        <div className="max-w-5xl mx-auto space-y-12">
+        <div className="max-w-5xl mx-auto space-y-12 pb-20 px-4 md:px-0">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row items-center gap-8 bg-breakfast-coffee text-white p-10 rounded-3xl shadow-xl relative overflow-hidden">
+            <div className="bg-breakfast-coffee text-white p-6 md:p-10 rounded-3xl shadow-xl relative overflow-hidden transition-all duration-500">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
 
-                {user?.photoURL ? (
-                    <img
-                        src={user.photoURL}
-                        alt="Profile"
-                        className="w-32 h-32 rounded-full border-4 border-breakfast-egg shadow-lg relative z-10"
-                    />
-                ) : (
-                    <div className="w-32 h-32 rounded-full bg-primary flex items-center justify-center text-4xl font-black text-white border-4 border-breakfast-egg shadow-lg relative z-10">
-                        {(user?.displayName || user?.email)?.[0].toUpperCase()}
-                    </div>
-                )}
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-8 relative z-10">
+                    {/* Avatar Display/Edit */}
+                    <div className="relative group">
+                        {(avatarPreview || profile?.photoURL || user?.photoURL) ? (
+                            <img
+                                src={avatarPreview || profile?.photoURL || user?.photoURL || ''}
+                                alt="Profile"
+                                className={`w-32 h-32 rounded-full border-4 border-breakfast-egg shadow-lg object-cover transition-opacity ${isEditing ? 'opacity-70' : ''}`}
+                            />
+                        ) : (
+                            <div className="w-32 h-32 rounded-full bg-primary flex items-center justify-center text-4xl font-black text-white border-4 border-breakfast-egg shadow-lg">
+                                {displayName.charAt(0).toUpperCase()}
+                            </div>
+                        )}
 
-                <div className="text-center md:text-left relative z-10">
-                    <h1 className="text-4xl font-black tracking-tight mb-2">
-                        {user?.displayName || user?.email?.split('@')[0]}
-                    </h1>
-                    <div className="flex flex-wrap justify-center md:justify-start gap-4 text-white/70 text-sm font-medium">
-                        <div className="flex items-center gap-1.5">
-                            <Calendar size={16} className="text-breakfast-egg" />
-                            Joined {new Date(user?.metadata.creationTime || '').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                            <MapPin size={16} className="text-breakfast-egg" />
-                            Chicago, IL
-                        </div>
+                        {isEditing && (
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                                <Camera className="text-white" size={32} />
+                            </button>
+                        )}
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                        />
+                    </div>
+
+                    <div className="flex-1 space-y-4 text-center md:text-left">
+                        {isEditing ? (
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1 block">Display Name</label>
+                                    <input
+                                        type="text"
+                                        value={formData.displayName}
+                                        onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                                        className="bg-white/10 border border-white/20 rounded-xl px-4 py-2 w-full text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-breakfast-egg"
+                                        placeholder="Your Name"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1 block">Location</label>
+                                        <div className="relative">
+                                            <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-breakfast-egg" />
+                                            <input
+                                                type="text"
+                                                value={formData.location}
+                                                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                                className="bg-white/10 border border-white/20 rounded-xl pl-9 pr-4 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-breakfast-egg"
+                                                placeholder="e.g. Chicago, IL"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 text-white/50 text-sm h-full mt-6">
+                                        <Calendar size={16} />
+                                        Joined {new Date(user?.metadata.creationTime || '').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1 block">Bio</label>
+                                    <textarea
+                                        value={formData.bio}
+                                        onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                                        className="bg-white/10 border border-white/20 rounded-xl px-4 py-2 w-full text-sm h-24 focus:outline-none focus:ring-2 focus:ring-breakfast-egg resize-none"
+                                        placeholder="Add a little bio about your sandwich journey..."
+                                    />
+                                </div>
+                                <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
+                                    <button
+                                        onClick={handleSaveProfile}
+                                        disabled={isSaving}
+                                        className="bg-breakfast-egg text-breakfast-coffee px-6 py-2 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-transform disabled:opacity-50"
+                                    >
+                                        {isSaving ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}
+                                        Save Changes
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setIsEditing(false);
+                                            setAvatarPreview(null);
+                                            setAvatarFile(null);
+                                        }}
+                                        disabled={isSaving}
+                                        className="bg-white/10 text-white px-6 py-2 rounded-xl font-bold flex items-center gap-2 hover:bg-white/20 transition-colors disabled:opacity-50"
+                                    >
+                                        <X size={18} />
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div>
+                                    <h1 className="text-4xl font-black tracking-tight mb-2">
+                                        {displayName}
+                                    </h1>
+                                    <div className="flex flex-wrap justify-center md:justify-start gap-4 text-white/70 text-sm font-medium">
+                                        <div className="flex items-center gap-1.5">
+                                            <Calendar size={16} className="text-breakfast-egg" />
+                                            Joined {new Date(user?.metadata.creationTime || '').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <MapPin size={16} className="text-breakfast-egg" />
+                                            {profile?.location || 'Chicago, IL'}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {profile?.bio && (
+                                    <p className="text-white/80 max-w-2xl leading-relaxed italic border-l-4 border-breakfast-egg/30 pl-4 py-1">
+                                        "{profile.bio}"
+                                    </p>
+                                )}
+
+                                <div className="pt-2">
+                                    <button
+                                        onClick={() => setIsEditing(true)}
+                                        className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors border border-white/10"
+                                    >
+                                        <Edit3 size={16} />
+                                        Edit Profile
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
@@ -145,47 +336,21 @@ export default function ProfilePage() {
                 </div>
 
                 {reviews.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {reviews.map((review) => (
-                            <Link
+                            <ReviewCard
                                 key={review.id}
-                                href={`/sandwich/${review.sandwichId}`}
-                                className="block group"
-                            >
-                                <div className="bg-white border border-border p-6 rounded-2xl shadow-sm group-hover:shadow-md group-hover:border-primary/20 transition-all flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                    <div className="flex items-start gap-4">
-                                        <div className="bg-secondary/50 p-3 rounded-xl text-primary group-hover:scale-110 transition-transform">
-                                            <Utensils size={24} />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold text-lg text-breakfast-coffee group-hover:text-primary transition-colors leading-tight mb-1">
-                                                {review.sandwichName}
-                                            </h3>
-                                            <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                                                {review.restaurantName}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-8">
-                                        <div className="text-right">
-                                            <div className="flex items-center justify-end gap-1 mb-1">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <Star
-                                                        key={i}
-                                                        size={14}
-                                                        className={i < review.rating ? 'fill-breakfast-egg text-breakfast-egg' : 'text-gray-200'}
-                                                    />
-                                                ))}
-                                            </div>
-                                            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
-                                                {new Date(review.createdAt).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                        <ChevronRight size={20} className="text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                                    </div>
-                                </div>
-                            </Link>
+                                title={review.sandwichName}
+                                subtitle={new Date(review.createdAt).toLocaleDateString()}
+                                rating={review.rating}
+                                comment={review.comment}
+                                createdAt={review.createdAt}
+                                footer={`At ${review.restaurantName}`}
+                                actionLink={{
+                                    href: `/sandwich/${review.sandwichId}`,
+                                    label: 'View Sammie'
+                                }}
+                            />
                         ))}
                     </div>
                 ) : (
