@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { collection, getDocs, doc, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { deleteRestaurantCascading } from '@/lib/admin';
+import EditRestaurantModal from '@/components/EditRestaurantModal';
 import { Trash2, Store, Loader2, Globe, MapPin, Search, ArrowUpRight, Plus } from 'lucide-react';
 import Link from 'next/link';
 
@@ -11,6 +12,9 @@ interface RestaurantData {
     id: string;
     name: string;
     location: string;
+    address?: string;
+    lat?: number;
+    lng?: number;
     website?: string;
     createdAt?: any;
 }
@@ -104,6 +108,10 @@ export default function RestaurantsAdmin() {
                                 <div className="flex justify-between items-start gap-4">
                                     <h3 className="text-3xl font-black text-breakfast-coffee tracking-tight leading-[1.1]">{rest.name}</h3>
                                     <div className="flex gap-2">
+                                        <EditRestaurantModal
+                                            restaurant={rest}
+                                            className="p-3.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-2xl transition-all shadow-sm active:scale-95"
+                                        />
                                         <button
                                             onClick={() => handleDelete(rest.id, rest.name)}
                                             disabled={deleting === rest.id}

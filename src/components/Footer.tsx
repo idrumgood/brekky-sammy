@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { Coffee, Github, Globe } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+    const pathname = usePathname();
     const currentYear = new Date().getFullYear();
 
     return (

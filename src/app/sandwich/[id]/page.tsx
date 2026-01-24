@@ -13,6 +13,9 @@ interface Restaurant {
     id: string;
     name: string;
     location?: string;
+    address?: string;
+    lat?: number;
+    lng?: number;
     website?: string;
 }
 
@@ -210,15 +213,26 @@ export default async function SandwichDetailPage({
                 {/* Right Column: Restaurant Sidebar */}
                 <div className="space-y-6">
                     <div className="bg-breakfast-coffee text-white rounded-3xl p-8 sticky top-24 relative group">
-                        {sandwich.restaurant && <EditRestaurantModal restaurant={sandwich.restaurant} />}
+                        {sandwich.restaurant && (
+                            <div className="absolute top-4 right-4">
+                                <EditRestaurantModal restaurant={sandwich.restaurant} />
+                            </div>
+                        )}
                         <h3 className="text-xl font-bold mb-6">About the Restaurant</h3>
 
                         <div className="space-y-6">
                             <div>
                                 <h4 className="text-breakfast-egg font-bold text-lg mb-1">{sandwich.restaurant?.name}</h4>
-                                <div className="flex items-start gap-2 text-white/80 text-sm">
-                                    <MapPin size={16} className="shrink-0 mt-0.5" />
-                                    <span>{sandwich.restaurant?.location || "Location not available"}</span>
+                                <div className="space-y-1">
+                                    <div className="flex items-start gap-2 text-white/80 text-sm">
+                                        <MapPin size={16} className="shrink-0 mt-0.5" />
+                                        <span>{sandwich.restaurant?.location || "Location not available"}</span>
+                                    </div>
+                                    {sandwich.restaurant?.address && (
+                                        <div className="text-white/60 text-xs pl-6">
+                                            {sandwich.restaurant.address}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

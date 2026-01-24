@@ -11,12 +11,15 @@
 - [x] Integrate Firebase Storage for photo uploads during reviews
 - [x] Add ability to tag specific ingredients used in the sandwich
 - [ ] Implement "Edit Review" functionality for users
+- [x] **Photo Upload Refinement**: Restore choice between camera and gallery for mobile users
 
 ## 📊 Enhancements & Features
 - [x] **Admin Dashboard**: Simple UI for club admins to manage/update restaurant and sandwich data
 - [ ] **Leaderboard**: Add a "Top Rated" page with more filters (by neighborhood, by ingredient)
 - [ ] **Social Features**: Allow users to follow each other's brunch activities
-- [ ] **Maps Integration**: Add a map view to the search results page
+- [x] **Maps Integration**: Added a dedicated "Map Room" with auto-centering and CartoDB styles
+- [x] **Navbar Evolution**: Condensed mobile search icon with full-width expansion
+- [x] **UI Security**: Role-based protection for restaurant editing (Admins only)
 
 ## 🚀 DevOps & Maintenance
 - [x] Set up a CI/CD pipeline using Google Cloud Build (automatic deploy on git push)
