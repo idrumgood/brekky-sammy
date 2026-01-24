@@ -348,7 +348,7 @@ export default function ProfilePage() {
                                 footer={`At ${review.restaurantName}`}
                                 actionLink={{
                                     href: `/sandwich/${review.sandwichId}`,
-                                    label: 'View Sammie'
+                                    label: 'View Sammy'
                                 }}
                             />
                         ))}

@@ -1,29 +1,57 @@
 import Hero from "@/components/Hero";
 import SandwichCard from "@/components/SandwichCard";
 import { db } from "@/lib/firebase-admin";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-async function getFeaturedSandwiches() {
-  const sandwichesSnap = await db.collection("sandwiches")
-    .orderBy("averageRating", "desc")
-    .limit(4)
-    .get();
+async function getHomeData() {
+  const [sandwichesSnap, restaurantsSnap, usersSnap] = await Promise.all([
+    db.collection("sandwiches").orderBy("averageRating", "desc").limit(4).get(),
+    db.collection("restaurants").get(),
+    db.collection("users").limit(10).get() // Get a few users for the avatar display
+  ]);
 
-  const restaurantsSnap = await db.collection("restaurants").get();
+  const totalUsersSnap = await db.collection("users").count().get();
+  const totalUsers = totalUsersSnap.data().count;
+
   const restaurantsMap = Object.fromEntries(
     restaurantsSnap.docs.map(doc => [doc.id, doc.data().name])
   );
 
-  return sandwichesSnap.docs.map(doc => ({
+  const sandwiches = sandwichesSnap.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
     restaurantName: restaurantsMap[doc.data().restaurantId] || "Unknown",
   })) as any[];
+
+  const featuredUsers = usersSnap.docs
+    .map(doc => ({
+      uid: doc.id,
+      displayName: doc.data().displayName || "Sammy Scout",
+      photoURL: doc.data().photoURL || null,
+    }))
+    .filter(u => u.photoURL) // Prioritize users with photos
+    .slice(0, 4);
+
+  // If not enough users with photos, fill with others
+  if (featuredUsers.length < 4) {
+    const others = usersSnap.docs
+      .map(doc => ({
+        uid: doc.id,
+        displayName: doc.data().displayName || "Sammy Scout",
+        photoURL: doc.data().photoURL || null,
+      }))
+      .filter(u => !featuredUsers.find(fu => fu.uid === u.uid))
+      .slice(0, 4 - featuredUsers.length);
+    featuredUsers.push(...others);
+  }
+
+  return { sandwiches, totalUsers, featuredUsers };
 }
 
 export default async function Home() {
-  const sandwiches = await getFeaturedSandwiches();
+  const { sandwiches, totalUsers, featuredUsers } = await getHomeData();
 
   return (
     <div className="space-y-12 pb-20">
@@ -32,10 +60,12 @@ export default async function Home() {
       <section>
         <div className="flex items-end justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-breakfast-coffee">Top Rated Sammies</h2>
+            <h2 className="text-3xl font-bold text-breakfast-coffee">Top Rated Sammys</h2>
             <p className="text-muted-foreground">The cream of the crop, as voted by our club.</p>
           </div>
-          <button className="text-primary font-bold text-sm hover:underline">View All</button>
+          <Link href="/search" className="text-primary font-bold text-sm hover:underline">
+            View All
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -64,14 +94,23 @@ export default async function Home() {
           </p>
           <div className="flex gap-4">
             <div className="flex -space-x-3 overflow-hidden">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="inline-block h-10 w-10 rounded-full ring-2 ring-white bg-secondary flex items-center justify-center text-xs font-bold text-primary">
-                  {String.fromCharCode(64 + i)}
-                </div>
+              {featuredUsers.map((user) => (
+                user.photoURL ? (
+                  <img
+                    key={user.uid}
+                    src={user.photoURL}
+                    alt={user.displayName}
+                    className="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover"
+                  />
+                ) : (
+                  <div key={user.uid} className="inline-block h-10 w-10 rounded-full ring-2 ring-white bg-secondary flex items-center justify-center text-xs font-bold text-primary">
+                    {user.displayName.charAt(0).toUpperCase()}
+                  </div>
+                )
               ))}
             </div>
             <p className="text-sm text-muted-foreground flex items-center">
-              Joined by <span className="font-bold text-breakfast-coffee mx-1">12+</span> brunch enthusiasts
+              Joined by <span className="font-bold text-breakfast-coffee mx-1">{totalUsers}</span> brunch enthusiasts
             </p>
           </div>
         </div>

@@ -97,11 +97,11 @@ export default async function PublicProfilePage({
         <div className="max-w-5xl mx-auto space-y-12 px-4 md:px-0 mb-20">
             {/* Back Button */}
             <Link
-                href="/"
+                href="/search"
                 className="inline-flex items-center gap-2 text-muted-foreground hover:text-breakfast-coffee transition-colors group"
             >
                 <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                Back to all sammies
+                Back to all sammys
             </Link>
 
             {/* Profile Header */}
@@ -176,7 +176,7 @@ export default async function PublicProfilePage({
                                 footer={`At ${review.restaurantName}`}
                                 actionLink={{
                                     href: `/sandwich/${review.sandwichId}`,
-                                    label: 'View Sammie'
+                                    label: 'View Sammy'
                                 }}
                             />
                         ))}
