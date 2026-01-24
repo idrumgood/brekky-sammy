@@ -3,6 +3,8 @@ import { db } from '@/lib/firebase';
 import { Map as MapIcon, Compass, Info } from 'lucide-react';
 import MapView from '@/components/MapView';
 
+export const dynamic = "force-dynamic";
+
 const sanitize = (obj: any) => {
     if (!obj) return null;
     const newObj = { ...obj };
