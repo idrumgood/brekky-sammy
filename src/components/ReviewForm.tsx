@@ -400,7 +400,6 @@ export default function ReviewForm() {
                                         <input
                                             type="file"
                                             accept="image/*"
-                                            capture="environment" // Triggers camera on mobile
                                             className="absolute inset-0 opacity-0 cursor-pointer"
                                             onChange={handleImageChange}
                                         />
