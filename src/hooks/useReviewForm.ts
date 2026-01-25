@@ -44,6 +44,7 @@ export function useReviewForm() {
     const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [formErrors, setFormErrors] = useState<string[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -114,6 +115,7 @@ export function useReviewForm() {
     const handleSubmit = async () => {
         if (!user) return;
         setLoading(true);
+        setFormErrors([]);
         try {
             await createReview({
                 userId: user.uid,
@@ -125,13 +127,19 @@ export function useReviewForm() {
                 ingredients: selectedIngredients,
                 imageFile: imageFile || undefined,
                 newRestaurantName: selectedRestaurantId === 'new' ? newRestaurantName : undefined,
-                newRestaurantWebsite: selectedRestaurantId === 'new' ? newRestaurantWebsite : undefined,
+                newRestaurantWebsite: selectedRestaurantId === 'new' ? (newRestaurantWebsite || undefined) : undefined,
                 newSandwichName: selectedSandwichId === 'new' ? newSandwichName : undefined,
             });
             router.push('/profile');
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error submitting review:', error);
-            alert('Something went wrong. Please try again.');
+            if (error.message?.includes('Validation failed')) {
+                const errors = error.message.replace('Validation failed: ', '').split(', ');
+                setFormErrors(errors);
+                setStep(4); // Ensure user sees summary/errors
+            } else {
+                alert('Something went wrong. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -155,6 +163,7 @@ export function useReviewForm() {
         activeSuggestionIndex, setActiveSuggestionIndex,
         imageFile, setImageFile,
         imagePreview, setImagePreview,
+        formErrors,
         handleImageChange,
         addIngredient,
         removeIngredient,

@@ -110,4 +110,19 @@ describe('reviews.ts library', () => {
         await createReview(mockInput);
         expect(mockTransaction.update).toHaveBeenCalled();
     });
+
+
+    it('should throw error on validation failure', async () => {
+        const mockInput = {
+            userId: '', // Invalid: min(1)
+            userName: 'User',
+            rating: 10, // Invalid: max(5)
+            comment: 'Too short?',
+            sandwichId: 'sand1',
+            restaurantId: 'rest1',
+            ingredients: []
+        };
+
+        await expect(createReview(mockInput as any)).rejects.toThrow('Validation failed');
+    });
 });

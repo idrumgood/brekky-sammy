@@ -6,6 +6,8 @@ import {
     serverTimestamp
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { UserProfileSchema } from './validation';
+import { sanitizeText } from './sanitization';
 
 export interface UserProfile {
     uid: string;
@@ -40,12 +42,28 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
  * Updates a user profile in Firestore.
  */
 export async function updateUserProfile(uid: string, data: Partial<UserProfile>) {
+    // Validate data using Zod
+    const validationResult = UserProfileSchema.partial().safeParse(data);
+    if (!validationResult.success) {
+        const errorMsg = validationResult.error.issues.map(i => i.message).join(', ');
+        throw new Error(`Validation failed: ${errorMsg}`);
+    }
+
+    const validatedData = validationResult.data;
+
     try {
         const userRef = doc(db, 'users', uid);
-        await updateDoc(userRef, {
-            ...data,
+        const updates: any = {
+            ...validatedData,
             lastUpdated: serverTimestamp()
-        });
+        };
+
+        // Sanitize string fields
+        if (updates.displayName) updates.displayName = sanitizeText(updates.displayName);
+        if (updates.location) updates.location = sanitizeText(updates.location);
+        if (updates.bio) updates.bio = sanitizeText(updates.bio);
+
+        await updateDoc(userRef, updates);
         return true;
     } catch (error) {
         console.error('Error updating user profile:', error);

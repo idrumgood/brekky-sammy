@@ -52,20 +52,23 @@ async function searchSandwiches(query: string): Promise<SandwichResult[]> {
     });
 }
 
+import { sanitizeText } from "@/lib/sanitization";
+
 export default async function SearchPage({
     searchParams,
 }: {
     searchParams: Promise<{ q?: string }>;
 }) {
     const { q } = await searchParams;
-    const results = await searchSandwiches(q || "");
+    const sanitizedQ = q ? sanitizeText(q) : "";
+    const results = await searchSandwiches(sanitizedQ);
 
     return (
         <div className="space-y-8 pb-20">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-4xl font-bold text-breakfast-coffee">
-                        {q ? `Results for "${q}"` : "All Sandwiches"}
+                        {sanitizedQ ? `Results for "${sanitizedQ}"` : "All Sandwiches"}
                     </h1>
                     <p className="text-muted-foreground">
                         Found {results.length} {results.length === 1 ? 'sandwich' : 'sandwiches'} matching your search.

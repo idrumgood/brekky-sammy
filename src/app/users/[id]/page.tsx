@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Star, MapPin, MessageSquare, ArrowLeft, Calendar } from 'lucide-react';
 import ReviewCard from "@/components/ReviewCard";
 import ProfileStats from "@/components/ProfileStats";
+import { sanitizeText } from "@/lib/sanitization";
 
 export const dynamic = "force-dynamic";
 
@@ -44,10 +45,10 @@ async function getUserData(uid: string) {
     // Sanitize user data
     const sanitizedUser = {
         uid,
-        displayName: userData?.displayName || "Anonymous Scout",
+        displayName: sanitizeText(userData?.displayName || "Anonymous Scout"),
         photoURL: userData?.photoURL || null,
-        location: userData?.location || "Chicago, IL",
-        bio: userData?.bio || null,
+        location: sanitizeText(userData?.location || "Chicago, IL"),
+        bio: userData?.bio ? sanitizeText(userData.bio) : null,
         createdAt: userData?.createdAt?.toDate?.()?.toISOString() || userData?.createdAt || null
     };
 

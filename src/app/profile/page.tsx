@@ -12,7 +12,7 @@ import {
     getDoc,
     doc
 } from 'firebase/firestore';
-import { Loader2, Calendar, Star, MapPin, MessageSquare, Edit3, Save, X, Camera, Check } from 'lucide-react';
+import { Loader2, Calendar, MapPin, MessageSquare, Edit3, X, Camera, Check } from 'lucide-react';
 import Link from 'next/link';
 import ProfileStats from '@/components/ProfileStats';
 import ReviewCard from '@/components/ReviewCard';
@@ -45,6 +45,7 @@ export default function ProfilePage() {
     });
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const [formErrors, setFormErrors] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -136,6 +137,7 @@ export default function ProfilePage() {
     const handleSaveProfile = async () => {
         if (!user) return;
         setIsSaving(true);
+        setFormErrors([]);
         try {
             let photoURL = profile?.photoURL || user.photoURL || '';
 
@@ -155,12 +157,13 @@ export default function ProfilePage() {
             setIsEditing(false);
             setAvatarFile(null);
             setAvatarPreview(null);
-
-            // Note: useAuth might still show old displayName/photoURL until refresh
-            // This is a known limitation of client-side auth state vs Firestore
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error saving profile:', error);
-            alert('Failed to save profile. Please try again.');
+            if (error.message?.includes('Validation failed')) {
+                setFormErrors(error.message.replace('Validation failed: ', '').split(', '));
+            } else {
+                alert('Failed to save profile. Please try again.');
+            }
         } finally {
             setIsSaving(false);
         }
@@ -222,6 +225,14 @@ export default function ProfilePage() {
                     <div className="flex-1 space-y-4 text-center md:text-left">
                         {isEditing ? (
                             <div className="space-y-4">
+                                {formErrors.length > 0 && (
+                                    <div className="bg-destructive/20 border border-destructive/30 p-4 rounded-xl mb-4">
+                                        <p className="text-white font-bold text-xs mb-1">Please fix the following:</p>
+                                        <ul className="list-disc list-inside text-white/70 text-xs">
+                                            {formErrors.map((err, i) => <li key={i}>{err}</li>)}
+                                        </ul>
+                                    </div>
+                                )}
                                 <div>
                                     <label className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1 block">Display Name</label>
                                     <input
