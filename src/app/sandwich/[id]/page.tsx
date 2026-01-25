@@ -8,6 +8,7 @@ import { Star, MapPin, MessageSquare, Utensils, ArrowLeft, Info, ChevronRight } 
 import ReviewCard from "@/components/ReviewCard";
 import ImageCarousel from "@/components/ImageCarousel";
 import EditRestaurantModal from "@/components/EditRestaurantModal";
+import EditSandwichModal from "@/components/EditSandwichModal";
 
 interface Restaurant {
     id: string;
@@ -136,8 +137,16 @@ export default async function SandwichDetailPage({
                         />
                         <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between pointer-events-none">
                             <div className="pointer-events-auto">
-                                <h1 className="text-4xl font-extrabold text-white mb-2 drop-shadow-md">
+                                <h1 className="text-4xl font-extrabold text-white mb-2 drop-shadow-md flex items-center gap-3">
                                     {sandwich.name}
+                                    <EditSandwichModal
+                                        sandwich={{
+                                            id: sandwich.id,
+                                            name: sandwich.name,
+                                            restaurantId: sandwich.restaurantId,
+                                            ingredients: sandwich.ingredients
+                                        }}
+                                    />
                                 </h1>
                                 <div className="flex items-center gap-4 text-white/90">
                                     <div className="flex items-center gap-1">

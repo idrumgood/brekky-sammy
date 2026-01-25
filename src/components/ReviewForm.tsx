@@ -19,7 +19,9 @@ import {
     X,
     Loader2,
     MapPin,
-    MessageSquare
+    MessageSquare,
+    Lock,
+    HelpCircle
 } from 'lucide-react';
 
 interface Restaurant {
@@ -31,6 +33,7 @@ interface Sandwich {
     id: string;
     name: string;
     restaurantId: string;
+    ingredients?: string[];
 }
 
 export default function ReviewForm() {
@@ -49,6 +52,7 @@ export default function ReviewForm() {
     const [newRestaurantWebsite, setNewRestaurantWebsite] = useState(''); // Added
     const [selectedSandwichId, setSelectedSandwichId] = useState('');
     const [newSandwichName, setNewSandwichName] = useState('');
+    const [originalIngredients, setOriginalIngredients] = useState<string[]>([]);
 
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
@@ -86,6 +90,20 @@ export default function ReviewForm() {
         }
     }, [selectedRestaurantId]);
 
+    useEffect(() => {
+        if (selectedSandwichId && selectedSandwichId !== 'new') {
+            const sandwich = sandwiches.find(s => s.id === selectedSandwichId);
+            if (sandwich) {
+                const ings = sandwich.ingredients || [];
+                setSelectedIngredients(ings);
+                setOriginalIngredients(ings);
+            }
+        } else {
+            setSelectedIngredients([]);
+            setOriginalIngredients([]);
+        }
+    }, [selectedSandwichId, sandwiches]);
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -107,6 +125,7 @@ export default function ReviewForm() {
     };
 
     const removeIngredient = (ing: string) => {
+        if (originalIngredients.includes(ing)) return;
         setSelectedIngredients(selectedIngredients.filter(i => i !== ing));
     };
 
@@ -267,14 +286,27 @@ export default function ReviewForm() {
                                     What's inside?
                                 </label>
                                 <div className="flex flex-wrap gap-2 mb-4">
-                                    {selectedIngredients.map(ing => (
-                                        <span key={ing} className="bg-primary/10 text-primary px-3 py-1.5 rounded-full text-sm font-bold flex items-center gap-1 group">
-                                            {ing}
-                                            <button onClick={() => removeIngredient(ing)} className="hover:text-red-500 transition-colors">
-                                                <X size={14} />
-                                            </button>
-                                        </span>
-                                    ))}
+                                    {selectedIngredients.map(ing => {
+                                        const isOriginal = originalIngredients.includes(ing);
+                                        return (
+                                            <span key={ing} className={`px-3 py-1.5 rounded-full text-sm font-bold flex items-center gap-1 group transition-colors ${isOriginal ? 'bg-secondary text-muted-foreground' : 'bg-primary/10 text-primary'}`}>
+                                                {ing}
+                                                {isOriginal ? (
+                                                    <div className="relative group/tooltip">
+                                                        <Lock size={12} className="text-muted-foreground/50" />
+                                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-breakfast-coffee text-white text-[10px] rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-50 text-center font-medium shadow-xl">
+                                                            This ingredient is a core part of this Sammy and cannot be removed by members.
+                                                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-breakfast-coffee" />
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <button onClick={() => removeIngredient(ing)} className="hover:text-red-500 transition-colors">
+                                                        <X size={14} />
+                                                    </button>
+                                                )}
+                                            </span>
+                                        );
+                                    })}
                                 </div>
                                 <div className="relative">
                                     <div className="flex gap-2">
