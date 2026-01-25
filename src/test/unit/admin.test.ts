@@ -2,16 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deleteSandwichReviews, deleteSandwichCascading } from '@/lib/admin';
 import { getDocs, writeBatch, deleteDoc } from 'firebase/firestore';
 
-vi.mock('firebase/firestore', () => ({
-    getDocs: vi.fn(),
-    writeBatch: vi.fn(),
-    deleteDoc: vi.fn(),
-    query: vi.fn(),
-    collection: vi.fn(),
-    where: vi.fn(),
-    doc: vi.fn(),
-}));
-
 describe('admin.ts administrative logic', () => {
     const mockBatch = {
         delete: vi.fn(),

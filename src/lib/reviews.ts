@@ -127,7 +127,7 @@ export async function createReview(input: ReviewInput) {
                 comment: input.comment,
                 sandwichId: finalSandwichId,
                 imageUrl: imageUrl || null,
-                createdAt: serverTimestamp() // Updated to serverTimestamp for consistency
+                createdAt: serverTimestamp()
             });
 
             updateGlobalIngredients(transaction, input.ingredients);

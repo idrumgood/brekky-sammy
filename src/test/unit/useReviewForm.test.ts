@@ -14,10 +14,6 @@ vi.mock('next/navigation', () => ({
     useRouter: vi.fn(),
 }));
 
-vi.mock('@/lib/firebase', () => ({
-    db: {},
-}));
-
 vi.mock('@/lib/reviews', () => ({
     createReview: vi.fn(),
     getGlobalIngredients: vi.fn().mockResolvedValue(['bacon', 'egg', 'cheese']),

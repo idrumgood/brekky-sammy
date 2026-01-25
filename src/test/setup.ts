@@ -9,21 +9,31 @@ vi.mock('firebase/app', () => ({
 }));
 
 vi.mock('firebase/auth', () => ({
-    getAuth: vi.fn(),
+    getAuth: vi.fn(() => ({})),
+    onAuthStateChanged: vi.fn(),
+    signOut: vi.fn(),
 }));
 
 vi.mock('firebase/firestore', () => ({
     getFirestore: vi.fn(),
-    collection: vi.fn(() => ({ id: 'mock-collection' })),
-    doc: vi.fn(() => ({ id: 'mock-doc-id' })),
+    collection: vi.fn((db, path) => ({ id: path })),
+    doc: vi.fn((db, path, id) => ({ id: id || 'mock-doc-id' })),
     runTransaction: vi.fn(),
-    serverTimestamp: vi.fn(),
-    getDocs: vi.fn().mockResolvedValue({ docs: [] }),
+    serverTimestamp: vi.fn(() => 'mock-timestamp'),
+    getDocs: vi.fn().mockResolvedValue({ empty: true, docs: [] }),
     setDoc: vi.fn(),
     updateDoc: vi.fn(),
+    deleteDoc: vi.fn(),
+    writeBatch: vi.fn(() => ({
+        set: vi.fn(),
+        update: vi.fn(),
+        delete: vi.fn(),
+        commit: vi.fn().mockResolvedValue(undefined),
+    })),
     getDoc: vi.fn().mockResolvedValue({ exists: () => false, data: () => ({}) }),
     query: vi.fn(),
     orderBy: vi.fn(),
+    where: vi.fn(),
 }));
 
 vi.mock('firebase/storage', () => ({
@@ -32,7 +42,6 @@ vi.mock('firebase/storage', () => ({
     uploadBytes: vi.fn().mockResolvedValue({ ref: 'mock-storage-ref' }),
     getDownloadURL: vi.fn().mockResolvedValue('mock-download-url'),
 }));
-
 // Global mock for our internal firebase lib to be 100% safe
 vi.mock('@/lib/firebase', () => ({
     db: { type: 'firestore' },

@@ -5,26 +5,6 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { onAuthStateChanged } from 'firebase/auth';
 import { getDoc, setDoc, doc } from 'firebase/firestore';
 
-// Mock Firebase
-vi.mock('firebase/auth', () => ({
-    onAuthStateChanged: vi.fn(),
-    getAuth: vi.fn(),
-    signOut: vi.fn(),
-}));
-
-vi.mock('firebase/firestore', () => ({
-    getFirestore: vi.fn(),
-    doc: vi.fn(),
-    getDoc: vi.fn(),
-    setDoc: vi.fn(),
-    serverTimestamp: vi.fn(),
-}));
-
-vi.mock('@/lib/firebase', () => ({
-    auth: {},
-    db: {},
-}));
-
 // Helper component to test useAuth
 const TestConsumer = () => {
     const { user, loading, isAdmin } = useAuth();
