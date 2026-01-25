@@ -47,7 +47,7 @@ describe('reviews.ts library', () => {
         expect(mockTransaction.set).toHaveBeenCalledTimes(5);
 
         // Verify badge update was triggered
-        expect(updateUserBadges).toHaveBeenCalledWith('user1');
+        expect(updateUserBadges).toHaveBeenCalledWith('user1', ['first_restaurant', 'first_sandwich']);
     });
 
     it('should update an existing sandwich with average rating logic and photo merging', async () => {
