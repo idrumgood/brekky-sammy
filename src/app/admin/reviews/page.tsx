@@ -97,7 +97,7 @@ export default function ReviewsAdmin() {
 
                                     <div className="relative">
                                         <p className="text-lg font-medium text-breakfast-coffee leading-relaxed italic opacity-90 relative z-10 pl-8 border-l-4 border-primary/30 py-2">
-                                            "{review.comment}"
+                                            &quot;{review.comment}&quot;
                                         </p>
                                         <MessageSquare className="absolute -top-4 -left-2 text-primary/5 -z-0" size={80} />
                                     </div>

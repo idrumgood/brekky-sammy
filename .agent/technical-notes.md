@@ -1,9 +1,10 @@
 # Technical Notes & Lessons Learned
 
 ## Environment (WSL / Node.js)
-- **Problem**: `npm` and `node` are not available in the default `wsl bash -l -c` context without manual setup.
-- **Solution**: Always prefix Node-dependent commands with `source ~/.nvm/nvm.sh && ...`.
-- **Command Template**: `wsl bash -l -c "source ~/.nvm/nvm.sh && npm run build"`
+> [!IMPORTANT]
+> **CRITICAL**: Always prefix Node-dependent commands with `source ~/.nvm/nvm.sh && ...` and run via `wsl bash -l -c`.
+- **Command Template**: `wsl bash -l -c "source ~/.nvm/nvm.sh && <command>"`
+- **Example**: `wsl bash -l -c "source ~/.nvm/nvm.sh && npm install"`
 
 ## Google Cloud Platform (GCP)
 - **API Dependencies**: For Cloud Run deployments, ensure the following APIs are enabled:

@@ -303,7 +303,7 @@ export default function ProfilePage() {
 
                                 {profile?.bio && (
                                     <p className="text-white/80 max-w-2xl leading-relaxed italic border-l-4 border-breakfast-egg/30 pl-4 py-1">
-                                        "{profile.bio}"
+                                        &quot;{profile.bio}&quot;
                                     </p>
                                 )}
 
@@ -364,6 +364,6 @@ export default function ProfilePage() {
                     </div>
                 )}
             </section>
-        </div>
+        </div >
     );
 }

@@ -1,30 +1,11 @@
 import { db } from "@/lib/firebase-admin";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Star, MapPin, MessageSquare, Utensils, ArrowLeft, Calendar, User } from 'lucide-react';
+import { Star, MapPin, MessageSquare, ArrowLeft, Calendar } from 'lucide-react';
 import ReviewCard from "@/components/ReviewCard";
 import ProfileStats from "@/components/ProfileStats";
 
 export const dynamic = "force-dynamic";
-
-interface UserProfile {
-    uid: string;
-    displayName: string;
-    photoURL?: string;
-    location?: string;
-    bio?: string;
-    createdAt?: string;
-}
-
-interface Review {
-    id: string;
-    sandwichId: string;
-    sandwichName?: string;
-    restaurantName?: string;
-    rating: number;
-    comment: string;
-    createdAt: string;
-}
 
 async function getUserData(uid: string) {
     const userDoc = await db.collection("users").doc(uid).get();
@@ -138,7 +119,7 @@ export default async function PublicProfilePage({
                     </div>
                     {user.bio && (
                         <p className="text-white/80 max-w-2xl leading-relaxed italic">
-                            "{user.bio}"
+                            &quot;{user.bio}&quot;
                         </p>
                     )}
                 </div>
@@ -185,7 +166,7 @@ export default async function PublicProfilePage({
                     <div className="bg-secondary/20 border-2 border-dashed border-border rounded-3xl p-16 text-center">
                         <MessageSquare className="mx-auto text-muted-foreground/30 mb-4" size={48} />
                         <h3 className="text-xl font-bold text-breakfast-coffee mb-2">No reviews yet!</h3>
-                        <p className="text-muted-foreground">This scout hasn't posted any reviews yet.</p>
+                        <p className="text-muted-foreground">This scout hasn&apos;t posted any reviews yet.</p>
                     </div>
                 )}
             </section>

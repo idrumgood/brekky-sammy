@@ -109,7 +109,7 @@ export default function LoginPage() {
                         <div>
                             <p className="text-sm font-medium">Verification Required</p>
                             <p className="text-sm text-muted-foreground">
-                                We've sent a verification email to <strong>{user.email}</strong>.
+                                We&apos;ve sent a verification email to <strong>{user.email}</strong>.
                                 Please click the link in that email to continue.
                             </p>
                         </div>

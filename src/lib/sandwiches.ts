@@ -10,7 +10,7 @@ export interface Sandwich {
     ingredients?: string[];
     imageUrl?: string;
     allPhotos?: string[];
-    createdAt?: any;
+    createdAt?: unknown;
 }
 
 export async function updateSandwich(id: string, data: Partial<Sandwich>) {

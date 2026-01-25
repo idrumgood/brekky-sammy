@@ -1,4 +1,4 @@
-import { MapPin, Globe, ArrowUpRight, Store } from 'lucide-react';
+import { MapPin, Globe, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 
 interface RestaurantCardProps {
@@ -9,7 +9,7 @@ interface RestaurantCardProps {
     website?: string;
 }
 
-export default function RestaurantCard({ id, name, location, address, website }: RestaurantCardProps) {
+export default function RestaurantCard({ name, location, address, website }: Omit<RestaurantCardProps, 'id'>) {
     return (
         <div className="glassmorphism p-8 rounded-[2.5rem] border border-white/10 flex flex-col justify-between group hover:shadow-2xl hover:shadow-primary/5 transition-all relative overflow-hidden h-full">
             {/* Accent Background */}

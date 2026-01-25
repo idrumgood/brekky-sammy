@@ -108,7 +108,7 @@ export default function SandwichesAdmin() {
                         <div className="bg-secondary/50 p-6 rounded-full text-muted-foreground/20">
                             <Utensils size={64} />
                         </div>
-                        <p className="text-muted-foreground italic text-xl font-medium">"No such creation exists in our records."</p>
+                        <p className="text-muted-foreground italic text-xl font-medium">&quot;No such creation exists in our records.&quot;</p>
                     </div>
                 ) : (
                     filtered.map((sandwich) => (

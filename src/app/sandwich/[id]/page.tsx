@@ -77,7 +77,7 @@ async function getSandwichData(id: string): Promise<Sandwich | null> {
     reviews.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     // Sanitize objects to remove non-plain fields (like Firestore Timestamps)
-    const sanitize = (obj: any) => {
+    const sanitize = (obj: Record<string, any> | null) => {
         if (!obj) return null;
         const newObj = { ...obj };
         for (const [key, value] of Object.entries(newObj)) {
@@ -93,7 +93,7 @@ async function getSandwichData(id: string): Promise<Sandwich | null> {
     const otherSandwiches = otherSandwichesSnap.docs.map(doc => sanitize({
         id: doc.id,
         ...doc.data()
-    }));
+    })) as unknown as Sandwich[];
 
     return {
         id: sandwichDoc.id,
@@ -101,7 +101,7 @@ async function getSandwichData(id: string): Promise<Sandwich | null> {
         restaurant: restaurantData ? { id: restaurantDoc.id, ...sanitize(restaurantData) } : null,
         reviews,
         otherSandwiches,
-    };
+    } as unknown as Sandwich;
 }
 
 export default async function SandwichDetailPage({

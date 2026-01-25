@@ -20,7 +20,7 @@ export default function LegalPage() {
                     <div className="bg-destructive/5 border border-destructive/10 p-8 rounded-3xl">
                         <p className="text-sm font-bold text-destructive uppercase tracking-widest mb-4">Read carefully</p>
                         <p className="text-muted-foreground font-medium leading-relaxed">
-                            BREKKYSAMMY IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+                            BREKKYSAMMY IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
                             INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
                             PARTICULAR PURPOSE AND NONINFRINGEMENT.
                         </p>

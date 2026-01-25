@@ -64,7 +64,7 @@ export default function RestaurantsAdmin() {
             <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8">
                 <div className="space-y-2">
                     <h1 className="text-4xl font-black italic tracking-tighter text-breakfast-coffee mb-2">THE MAP ROOM</h1>
-                    <p className="text-muted-foreground text-lg italic max-w-xl">Curate the list of establishments that define the city's breakfast culture.</p>
+                    <p className="text-muted-foreground text-lg italic max-w-xl">Curate the list of establishments that define the city&apos;s breakfast culture.</p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto">
@@ -96,7 +96,7 @@ export default function RestaurantsAdmin() {
                         <div className="bg-secondary/50 p-6 rounded-full text-muted-foreground/20">
                             <Store size={64} />
                         </div>
-                        <p className="text-muted-foreground italic text-xl font-medium">"No such haven exists in our records."</p>
+                        <p className="text-muted-foreground italic text-xl font-medium">&quot;No such haven exists in our records.&quot;</p>
                     </div>
                 ) : (
                     filtered.map((rest) => (

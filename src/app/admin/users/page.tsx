@@ -104,7 +104,7 @@ export default function UsersAdmin() {
                         ) : filteredUsers.length === 0 ? (
                             <tr>
                                 <td colSpan={4} className="px-8 py-32 text-center text-muted-foreground italic">
-                                    "No matches found in the sandwich scrolls."
+                                    &quot;No matches found in the sandwich scrolls.&quot;
                                 </td>
                             </tr>
                         ) : (
@@ -146,8 +146,8 @@ export default function UsersAdmin() {
                                             onClick={() => toggleAdmin(user)}
                                             disabled={updating === user.uid}
                                             className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl text-xs font-black tracking-widest uppercase transition-all active:scale-95 ${user.role === 'admin'
-                                                    ? 'bg-destructive/10 text-destructive hover:bg-destructive hover:text-white shadow-inner'
-                                                    : 'bg-primary/10 text-primary hover:bg-primary hover:text-white shadow-sm'
+                                                ? 'bg-destructive/10 text-destructive hover:bg-destructive hover:text-white shadow-inner'
+                                                : 'bg-primary/10 text-primary hover:bg-primary hover:text-white shadow-sm'
                                                 } disabled:opacity-50 group-hover:translate-x-[-4px]`}
                                         >
                                             {updating === user.uid ? (

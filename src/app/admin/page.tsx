@@ -143,7 +143,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="mt-8 p-4 bg-primary/5 rounded-2xl border border-primary/10">
                         <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Admin Tip</p>
-                        <p className="text-xs text-muted-foreground">To remove "horse" from the pool, navigate to the Ingredients tab.</p>
+                        <p className="text-xs text-muted-foreground">To remove &quot;horse&quot; from the pool, navigate to the Ingredients tab.</p>
                     </div>
                 </div>
             </div>

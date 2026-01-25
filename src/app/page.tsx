@@ -88,7 +88,7 @@ export default async function Home() {
         <div className="max-w-3xl">
           <h2 className="text-2xl font-bold text-breakfast-coffee mb-4">What is BrekkySammy?</h2>
           <p className="text-muted-foreground leading-relaxed mb-6">
-            We're just a group of friends who take breakfast seriously. Every few weeks, we hit a new spot,
+            We&apos;re just a group of friends who take breakfast seriously. Every few weeks, we hit a new spot,
             order their signature sandwich, and give it an honest (and sometimes brutal) rating.
             This app helps us track our findings and discover the best morning fuel in Chicago.
           </p>

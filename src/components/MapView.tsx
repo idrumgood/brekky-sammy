@@ -26,7 +26,7 @@ interface Restaurant {
     website?: string;
 }
 
-export default function MapView({ restaurants }: { restaurants: any[] }) {
+export default function MapView({ restaurants }: { restaurants: Restaurant[] }) {
     return (
         <div className="w-full flex-1 h-full min-h-[70vh]">
             <MapComponent restaurants={restaurants} />
