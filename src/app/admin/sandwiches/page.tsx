@@ -6,6 +6,7 @@ import { db } from '@/lib/firebase';
 import { deleteSandwichCascading } from '@/lib/admin';
 import { Trash2, Utensils, Loader2, Search, ArrowUpRight, Star } from 'lucide-react';
 import Link from 'next/link';
+import EditSandwichModal from '@/components/EditSandwichModal';
 
 interface SandwichData {
     id: string;
@@ -24,30 +25,31 @@ export default function SandwichesAdmin() {
     const [search, setSearch] = useState('');
     const [deleting, setDeleting] = useState<string | null>(null);
 
-    useEffect(() => {
-        async function fetchSandwiches() {
-            try {
-                // Fetch sandwiches and restaurants to get the names
-                const [sandSnap, restSnap] = await Promise.all([
-                    getDocs(query(collection(db, 'sandwiches'), orderBy('name'))),
-                    getDocs(collection(db, 'restaurants'))
-                ]);
+    async function fetchSandwiches() {
+        try {
+            // Fetch sandwiches and restaurants to get the names
+            const [sandSnap, restSnap] = await Promise.all([
+                getDocs(query(collection(db, 'sandwiches'), orderBy('name'))),
+                getDocs(collection(db, 'restaurants'))
+            ]);
 
-                const restaurantsMap = Object.fromEntries(
-                    restSnap.docs.map(doc => [doc.id, doc.data().name])
-                );
+            const restaurantsMap = Object.fromEntries(
+                restSnap.docs.map(doc => [doc.id, doc.data().name])
+            );
 
-                setSandwiches(sandSnap.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    restaurantName: restaurantsMap[doc.data().restaurantId] || 'Unknown'
-                } as SandwichData)));
-            } catch (error) {
-                console.error("Error fetching sandwiches:", error);
-            } finally {
-                setLoading(false);
-            }
+            setSandwiches(sandSnap.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                restaurantName: restaurantsMap[doc.data().restaurantId] || 'Unknown'
+            } as SandwichData)));
+        } catch (error) {
+            console.error("Error fetching sandwiches:", error);
+        } finally {
+            setLoading(false);
         }
+    }
+
+    useEffect(() => {
         fetchSandwiches();
     }, []);
 
@@ -116,14 +118,26 @@ export default function SandwichesAdmin() {
                             <div className="space-y-6 relative z-10">
                                 <div className="flex justify-between items-start gap-4">
                                     <h3 className="text-3xl font-black text-breakfast-coffee tracking-tight leading-[1.1]">{sandwich.name}</h3>
-                                    <button
-                                        onClick={() => handleDelete(sandwich.id, sandwich.name)}
-                                        disabled={deleting === sandwich.id}
-                                        className="p-3.5 bg-destructive/10 text-destructive hover:bg-destructive hover:text-white rounded-2xl transition-all shadow-sm active:scale-95 disabled:opacity-50"
-                                        title="Permanently Remove"
-                                    >
-                                        {deleting === sandwich.id ? <Loader2 className="animate-spin" size={20} /> : <Trash2 size={20} />}
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <EditSandwichModal
+                                            sandwich={{
+                                                id: sandwich.id,
+                                                name: sandwich.name,
+                                                restaurantId: sandwich.restaurantId,
+                                                ingredients: sandwich.ingredients
+                                            }}
+                                            className="p-3.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-2xl transition-all shadow-sm active:scale-95"
+                                            onSuccess={fetchSandwiches}
+                                        />
+                                        <button
+                                            onClick={() => handleDelete(sandwich.id, sandwich.name)}
+                                            disabled={deleting === sandwich.id}
+                                            className="p-3.5 bg-destructive/10 text-destructive hover:bg-destructive hover:text-white rounded-2xl transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                                            title="Permanently Remove"
+                                        >
+                                            {deleting === sandwich.id ? <Loader2 className="animate-spin" size={20} /> : <Trash2 size={20} />}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-3">
