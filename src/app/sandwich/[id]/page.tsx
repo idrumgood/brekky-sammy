@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "@/lib/firebase-admin";
 
 export const dynamic = "force-dynamic";

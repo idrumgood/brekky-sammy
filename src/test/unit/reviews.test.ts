@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { createReview } from '@/lib/reviews';
 import { runTransaction } from 'firebase/firestore';

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deleteSandwichReviews, deleteSandwichCascading } from '@/lib/admin';
 import { getDocs, writeBatch, deleteDoc } from 'firebase/firestore';

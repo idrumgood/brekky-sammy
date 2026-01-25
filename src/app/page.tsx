@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Hero from "@/components/Hero";
 import SandwichCard from "@/components/SandwichCard";
 import { db } from "@/lib/firebase-admin";
