@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { createReview } from '@/lib/reviews';
 import { runTransaction } from 'firebase/firestore';
+import { updateUserBadges } from '@/lib/badges';
 
-// We've already mocked firebase and storage in src/test/setup.ts
+vi.mock('@/lib/badges', () => ({
+    updateUserBadges: vi.fn().mockResolvedValue([])
+}));
 
 describe('reviews.ts library', () => {
     let mockTransaction: any;
@@ -42,6 +45,9 @@ describe('reviews.ts library', () => {
         // Check that set was called for restaurant, sandwich, review, and each ingredient
         // 1 (rest) + 1 (sand) + 1 (review) + 2 (ingredients) = 5
         expect(mockTransaction.set).toHaveBeenCalledTimes(5);
+
+        // Verify badge update was triggered
+        expect(updateUserBadges).toHaveBeenCalledWith('user1', ['first_restaurant', 'first_sandwich']);
     });
 
     it('should update an existing sandwich with average rating logic and photo merging', async () => {

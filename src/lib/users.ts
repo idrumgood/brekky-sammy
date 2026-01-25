@@ -16,6 +16,7 @@ export interface UserProfile {
     photoURL: string;
     location?: string;
     bio?: string;
+    badges?: string[];
     lastLogin: unknown;
     createdAt?: unknown;
 }

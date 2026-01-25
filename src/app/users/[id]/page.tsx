@@ -5,6 +5,8 @@ import { Star, MapPin, MessageSquare, ArrowLeft, Calendar } from 'lucide-react';
 import ReviewCard from "@/components/ReviewCard";
 import ProfileStats from "@/components/ProfileStats";
 import { sanitizeText } from "@/lib/sanitization";
+import BadgeIcon from "@/components/BadgeIcon";
+import { ALL_BADGES } from "@/lib/badges";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +51,7 @@ async function getUserData(uid: string) {
         photoURL: userData?.photoURL || null,
         location: sanitizeText(userData?.location || "Chicago, IL"),
         bio: userData?.bio ? sanitizeText(userData.bio) : null,
+        badges: userData?.badges || [],
         createdAt: userData?.createdAt?.toDate?.()?.toISOString() || userData?.createdAt || null
     };
 
@@ -134,6 +137,28 @@ export default async function PublicProfilePage({
                 </h2>
                 <ProfileStats totalReviews={reviews.length} averageRating={avgRating} />
             </section>
+
+            {/* Badges Section */}
+            {user.badges.length > 0 && (
+                <section className="space-y-6">
+                    <h2 className="text-2xl font-bold text-breakfast-coffee flex items-center gap-2">
+                        <Star className="text-primary" />
+                        Honors
+                    </h2>
+                    <div className="bg-white rounded-3xl p-4 sm:p-8 border border-border shadow-sm">
+                        <div className="flex flex-wrap gap-4 sm:gap-8">
+                            {user.badges.map((slug: string) => (
+                                <BadgeIcon
+                                    key={slug}
+                                    slug={slug}
+                                    size="md"
+                                    showDescription={false}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {/* Reviews */}
             <section className="space-y-6">

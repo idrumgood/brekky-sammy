@@ -17,6 +17,8 @@ import Link from 'next/link';
 import ProfileStats from '@/components/ProfileStats';
 import ReviewCard from '@/components/ReviewCard';
 import { getUserProfile, updateUserProfile, uploadAvatar, UserProfile } from '@/lib/users';
+import BadgeIcon from '@/components/BadgeIcon';
+import { ALL_BADGES } from '@/lib/badges';
 
 interface Review {
     id: string;
@@ -337,6 +339,31 @@ export default function ProfilePage() {
             <section className="space-y-6">
                 <h2 className="text-2xl font-bold text-breakfast-coffee">Club Stats</h2>
                 <ProfileStats totalReviews={reviews.length} averageRating={avgRating} />
+            </section>
+
+            {/* Badges Section */}
+            <section className="space-y-6">
+                <div className="flex items-end justify-between">
+                    <div>
+                        <h2 className="text-2xl font-bold text-breakfast-coffee">Club Badges</h2>
+                        <p className="text-muted-foreground">Unlock honors by reviewing sandwiches and trying new ingredients.</p>
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-3xl p-4 sm:p-8 border border-border shadow-sm">
+                    <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 sm:gap-8">
+                        {ALL_BADGES.map((badge) => {
+                            const isEarned = profile?.badges?.includes(badge.slug);
+                            return (
+                                <BadgeIcon
+                                    key={badge.slug}
+                                    slug={badge.slug}
+                                    grayscale={!isEarned}
+                                />
+                            );
+                        })}
+                    </div>
+                </div>
             </section>
 
             {/* Review History */}
