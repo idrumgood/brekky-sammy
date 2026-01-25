@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -46,8 +47,8 @@ export default function IngredientsAdmin() {
         <div className="space-y-8">
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-4xl font-black italic tracking-tighter text-breakfast-coffee mb-2">INGREDIENT POOL</h1>
-                    <p className="text-muted-foreground text-lg italic">Prune the pantry. Eliminate the "horse".</p>
+                    <h1 className="text-4xl font-black italic tracking-tighter text-breakfast-coffee mb-2 text-glow">INGREDIENT POOL</h1>
+                    <p className="text-muted-foreground text-lg italic">Prune the pantry. Eliminate the &quot;horse&quot;.</p>
                 </div>
 
                 <div className="relative w-full lg:w-96 group">
@@ -110,7 +111,7 @@ export default function IngredientsAdmin() {
 
                         {filtered.length === 0 && (
                             <div className="text-center py-32 text-muted-foreground italic font-medium">
-                                "No such ingredient exists in these scrolls."
+                                &quot;No such ingredient exists in these scrolls.&quot;
                             </div>
                         )}
                     </>

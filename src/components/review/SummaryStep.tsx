@@ -64,11 +64,9 @@ export function SummaryStep({
                     ))}
                 </div>
 
-                {comment && (
-                    <p className="text-breakfast-coffee italic leading-relaxed border-l-4 border-primary/20 pl-4 py-1">
-                        "{comment}"
-                    </p>
-                )}
+                <p className="text-breakfast-coffee italic leading-relaxed border-l-4 border-primary/20 pl-4 py-1">
+                    &quot;{comment}&quot;
+                </p>
             </div>
 
             <div className="flex gap-4">

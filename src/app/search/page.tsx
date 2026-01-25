@@ -5,7 +5,18 @@ export const dynamic = "force-dynamic";
 
 import { Search as SearchIcon } from 'lucide-react';
 
-async function searchSandwiches(query: string) {
+interface SandwichResult {
+    id: string;
+    name: string;
+    restaurantId: string;
+    restaurantName: string;
+    averageRating: number;
+    reviewCount: number;
+    ingredients?: string[];
+    imageUrl?: string;
+}
+
+async function searchSandwiches(query: string): Promise<SandwichResult[]> {
     // Fetch all sandwiches and restaurants for in-memory search (since dataset is small)
     const sandwichesSnap = await db.collection("sandwiches").get();
     const restaurantsSnap = await db.collection("restaurants").get();
@@ -14,11 +25,19 @@ async function searchSandwiches(query: string) {
         restaurantsSnap.docs.map(doc => [doc.id, doc.data().name])
     );
 
-    const allSandwiches = sandwichesSnap.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        restaurantName: restaurantsMap[doc.data().restaurantId] || "Unknown",
-    })) as any[];
+    const allSandwiches = sandwichesSnap.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            name: data.name,
+            restaurantId: data.restaurantId,
+            restaurantName: restaurantsMap[data.restaurantId] || "Unknown",
+            averageRating: data.averageRating || 0,
+            reviewCount: data.reviewCount || 0,
+            ingredients: data.ingredients,
+            imageUrl: data.imageUrl,
+        };
+    });
 
     if (!query) return allSandwiches;
 
@@ -76,7 +95,7 @@ export default async function SearchPage({
                     </div>
                     <h2 className="text-xl font-bold text-breakfast-coffee mb-2">No sandwiches found</h2>
                     <p className="text-muted-foreground max-w-xs mx-auto">
-                        Try searching for something else, like "bacon", "allez", or "muffin".
+                        Try searching for something else, like &quot;bacon&quot;, &quot;allez&quot;, or &quot;muffin&quot;.
                     </p>
                 </div>
             )}

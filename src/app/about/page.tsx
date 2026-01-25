@@ -1,4 +1,4 @@
-import { Coffee, Globe, Github, Mail } from 'lucide-react';
+import { Coffee, Globe, Github } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AboutPage() {
@@ -12,7 +12,7 @@ export default function AboutPage() {
                     ABOUT THE <span className="text-primary underline decoration-breakfast-coffee/10 underline-offset-8">PROJECT</span>
                 </h1>
                 <p className="text-xl text-muted-foreground font-medium leading-relaxed italic max-w-2xl">
-                    "Searching for the perfect breakfast sandwich isn't just a hobby; it's a mission."
+                    &quot;Searching for the perfect breakfast sandwich isn&apos;t just a hobby; it&apos;s a mission.&quot;
                 </p>
             </div>
 

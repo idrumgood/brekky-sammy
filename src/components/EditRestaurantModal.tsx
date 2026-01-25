@@ -19,10 +19,9 @@ interface Restaurant {
 
 export default function EditRestaurantModal({ restaurant, className }: { restaurant: Restaurant, className?: string }) {
     const { isAdmin, loading: authLoading } = useAuth();
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-
-    if (authLoading || !isAdmin) return null;
     const [name, setName] = useState(restaurant.name);
     const [website, setWebsite] = useState(restaurant.website || '');
     const [location, setLocation] = useState(restaurant.location || '');
@@ -30,13 +29,13 @@ export default function EditRestaurantModal({ restaurant, className }: { restaur
     const [lat, setLat] = useState(restaurant.lat?.toString() || '');
     const [lng, setLng] = useState(restaurant.lng?.toString() || '');
     const [geocoding, setGeocoding] = useState(false);
-    const router = useRouter();
-
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    if (authLoading || !isAdmin) return null;
 
     const handleGeocode = async () => {
         if (!address) return;

@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useReviewForm } from '@/hooks/useReviewForm';
 import { useAuth } from '@/lib/AuthContext';
 import { useRouter } from 'next/navigation';
-import { getDocs, query, collection, orderBy } from 'firebase/firestore';
 
 // Mock dependencies
 vi.mock('@/lib/AuthContext', () => ({
@@ -25,8 +25,8 @@ describe('useReviewForm hook', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        (useAuth as any).mockReturnValue({ user: mockUser });
-        (useRouter as any).mockReturnValue({ push: mockPush });
+        vi.mocked(useAuth).mockReturnValue({ user: mockUser } as any);
+        vi.mocked(useRouter).mockReturnValue({ push: mockPush } as any);
     });
 
     it('should initialize with correct default state', () => {

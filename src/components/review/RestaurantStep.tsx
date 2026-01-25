@@ -37,7 +37,7 @@ export function RestaurantStep({
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
             <div>
-                <h2 className="text-3xl font-black text-breakfast-coffee mb-2">Where'd you eat?</h2>
+                <h2 className="text-3xl font-black text-breakfast-coffee mb-2">Where&apos;d you eat?</h2>
                 <p className="text-muted-foreground">Select a restaurant or add a new hidden gem.</p>
             </div>
 

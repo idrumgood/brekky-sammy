@@ -34,7 +34,7 @@ export function PhotoStep({
                 >
                     {imagePreview ? (
                         <>
-                            <img src={imagePreview} className="w-full h-full object-cover" />
+                            <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                             <button onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors">
                                 <X size={20} />
                             </button>

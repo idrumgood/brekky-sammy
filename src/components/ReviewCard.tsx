@@ -90,7 +90,7 @@ export default function ReviewCard({
                 {/* Comment Body - grows to fill space */}
                 <div className="flex-1 mb-6 relative">
                     <p className="text-muted-foreground text-sm leading-relaxed italic line-clamp-4">
-                        "{comment}"
+                        &quot;{comment}&quot;
                     </p>
                     {isLongComment && (
                         <button
@@ -161,7 +161,7 @@ export default function ReviewCard({
                                 </div>
 
                                 <p className="text-breakfast-coffee text-lg leading-relaxed italic">
-                                    "{comment}"
+                                    &quot;{comment}&quot;
                                 </p>
                             </div>
 

@@ -75,7 +75,7 @@ export function RatingStep({
                 <div className="space-y-4">
                     <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                         <ChefHat size={16} className="text-primary" />
-                        What's inside?
+                        What&apos;s inside?
                     </label>
                     <div className="flex flex-wrap gap-2 mb-4 max-h-[140px] overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-gray-200">
                         {selectedIngredients.map(ing => {

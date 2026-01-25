@@ -5,8 +5,7 @@ import {
     runTransaction,
     serverTimestamp,
     getDocs,
-    Transaction,
-    DocumentReference
+    Transaction
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { cleanIngredient, mergeIngredients } from './utils';
@@ -75,7 +74,13 @@ async function handleSandwichUpdate(
             const newCount = (data.reviewCount || 0) + 1;
             const newAvg = ((data.averageRating || 0) * (data.reviewCount || 0) + input.rating) / newCount;
 
-            const updates: any = {
+            const updates: {
+                reviewCount: number;
+                averageRating: number;
+                allPhotos?: string[];
+                imageUrl?: string;
+                ingredients?: string[];
+            } = {
                 reviewCount: newCount,
                 averageRating: newAvg,
             };

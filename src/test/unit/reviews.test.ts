@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createReview, uploadReviewImage } from '@/lib/reviews';
-import { runTransaction, doc } from 'firebase/firestore';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { createReview } from '@/lib/reviews';
+import { runTransaction } from 'firebase/firestore';
 
 // We've already mocked firebase and storage in src/test/setup.ts
 
@@ -17,7 +18,7 @@ describe('reviews.ts library', () => {
         };
 
         // Mock runTransaction to execute the callback immediately with our mockTransaction
-        (runTransaction as any).mockImplementation((db: any, callback: any) => callback(mockTransaction));
+        (runTransaction as Mock).mockImplementation((db: any, callback: any) => callback(mockTransaction));
     });
 
     it('should handle restaurant and sandwich creation in a transaction', async () => {

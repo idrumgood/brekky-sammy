@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Map as MapIcon, Compass, Info } from 'lucide-react';
@@ -37,7 +38,7 @@ export default async function MapPage() {
                 </div>
                 <h1 className="text-5xl font-black text-breakfast-coffee italic tracking-tighter">SURVEYING THE SCENE</h1>
                 <p className="text-muted-foreground text-lg italic max-w-xl leading-relaxed">
-                    A tactical overview of the city's most critical breakfast supply points.
+                    A tactical overview of the city&apos;s most critical breakfast supply points.
                 </p>
             </div>
 

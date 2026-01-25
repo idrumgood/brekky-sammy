@@ -41,7 +41,7 @@ export default function Hero() {
                         onClick={handleSearch}
                         className="h-14 px-8 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-primary/90 transition-all shadow-lg active:scale-95 whitespace-nowrap group-hover:-translate-y-1"
                     >
-                        Let's Eat
+                        Let&apos;s Eat
                     </button>
                 </div>
 

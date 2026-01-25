@@ -14,8 +14,8 @@ export interface UserProfile {
     photoURL: string;
     location?: string;
     bio?: string;
-    lastLogin: any; // Using any for Firestore serverTimestamp or Date string
-    createdAt?: any;
+    lastLogin: unknown;
+    createdAt?: unknown;
 }
 
 /**
