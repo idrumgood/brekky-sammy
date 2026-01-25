@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest"
+    "test": "vitest",
+    "retroactive-badges": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/retroactive-badges.ts",
+    "remove-streak": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/remove-streak.ts"
   },
   "dependencies": {
     "@types/dompurify": "^3.0.5",

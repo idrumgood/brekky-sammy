@@ -11,6 +11,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { cleanIngredient, mergeIngredients } from './utils';
 import { ReviewSchema, ReviewInput } from './validation';
 import { sanitizeText, sanitizeUrl } from './sanitization';
+import { updateUserBadges } from './badges';
 
 // ReviewInput is now imported from ./validation
 
@@ -120,7 +121,7 @@ export async function createReview(input: ReviewInput) {
     }
 
     try {
-        return await runTransaction(db, async (transaction) => {
+        const result = await runTransaction(db, async (transaction) => {
             const finalRestaurantId = await handleRestaurantLookup(transaction, validatedInput.restaurantId, validatedInput);
             const finalSandwichId = await handleSandwichUpdate(transaction, validatedInput.sandwichId, finalRestaurantId, validatedInput, imageUrl);
 
@@ -139,6 +140,15 @@ export async function createReview(input: ReviewInput) {
 
             return { restaurantId: finalRestaurantId, sandwichId: finalSandwichId };
         });
+
+        // Award badges asynchronously
+        const newAchievements: string[] = [];
+        if (validatedInput.restaurantId === 'new') newAchievements.push('first_restaurant');
+        if (validatedInput.sandwichId === 'new') newAchievements.push('first_sandwich');
+
+        updateUserBadges(validatedInput.userId, newAchievements).catch(err => console.error('Error awarding badges:', err));
+
+        return result;
     } catch (error) {
         console.error('Transaction failed: ', error);
         throw error;
