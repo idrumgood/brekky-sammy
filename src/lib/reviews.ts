@@ -9,20 +9,10 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { cleanIngredient, mergeIngredients } from './utils';
+import { ReviewSchema, ReviewInput } from './validation';
+import { sanitizeText, sanitizeUrl } from './sanitization';
 
-export interface ReviewInput {
-    userId: string;
-    userName: string;
-    rating: number;
-    comment: string;
-    sandwichId: string;
-    restaurantId: string;
-    ingredients: string[];
-    imageFile?: File;
-    newRestaurantName?: string;
-    newRestaurantWebsite?: string;
-    newSandwichName?: string;
-}
+// ReviewInput is now imported from ./validation
 
 export async function uploadReviewImage(file: File, userId: string): Promise<string> {
     const timestamp = Date.now();
@@ -35,8 +25,8 @@ async function handleRestaurantLookup(transaction: Transaction, restaurantId: st
     if (restaurantId === 'new' && input.newRestaurantName) {
         const restaurantRef = doc(collection(db, 'restaurants'));
         transaction.set(restaurantRef, {
-            name: input.newRestaurantName,
-            website: input.newRestaurantWebsite || null,
+            name: sanitizeText(input.newRestaurantName),
+            website: input.newRestaurantWebsite ? sanitizeUrl(input.newRestaurantWebsite) : null,
             location: 'Chicago, IL', // Default for now
             createdAt: serverTimestamp()
         });
@@ -55,11 +45,11 @@ async function handleSandwichUpdate(
     if (sandwichId === 'new' && input.newSandwichName) {
         const sandwichRef = doc(collection(db, 'sandwiches'));
         transaction.set(sandwichRef, {
-            name: input.newSandwichName,
+            name: sanitizeText(input.newSandwichName),
             restaurantId: restaurantId,
             averageRating: input.rating,
             reviewCount: 1,
-            ingredients: input.ingredients.map(cleanIngredient),
+            ingredients: input.ingredients.map(cleanIngredient).map(sanitizeText),
             imageUrl: imageUrl || null,
             allPhotos: imageUrl ? [imageUrl] : [],
             createdAt: serverTimestamp()
@@ -94,7 +84,8 @@ async function handleSandwichUpdate(
             }
 
             const currentIngredients = data.ingredients || [];
-            updates.ingredients = mergeIngredients(currentIngredients, input.ingredients);
+            const sanitizedNewIngredients = input.ingredients.map(sanitizeText);
+            updates.ingredients = mergeIngredients(currentIngredients, sanitizedNewIngredients);
 
             transaction.update(sandwichRef, updates);
         }
@@ -106,36 +97,45 @@ function updateGlobalIngredients(transaction: Transaction, ingredients: string[]
     if (ingredients.length === 0) return;
     for (const ingredient of ingredients) {
         const cleaned = cleanIngredient(ingredient);
-        if (!cleaned) continue;
-        const ingredientRef = doc(db, 'ingredients', cleaned);
-        transaction.set(ingredientRef, { name: cleaned }, { merge: true });
+        const sanitized = sanitizeText(cleaned);
+        if (!sanitized) continue;
+        const ingredientRef = doc(db, 'ingredients', sanitized);
+        transaction.set(ingredientRef, { name: sanitized }, { merge: true });
     }
 }
 
 export async function createReview(input: ReviewInput) {
+    // Validate input using Zod before any operations
+    const validationResult = ReviewSchema.safeParse(input);
+    if (!validationResult.success) {
+        const errorMsg = validationResult.error.issues.map(i => i.message).join(', ');
+        throw new Error(`Validation failed: ${errorMsg}`);
+    }
+
+    const validatedInput = validationResult.data;
     let imageUrl = '';
 
     if (input.imageFile) {
-        imageUrl = await uploadReviewImage(input.imageFile, input.userId);
+        imageUrl = await uploadReviewImage(input.imageFile, validatedInput.userId);
     }
 
     try {
         return await runTransaction(db, async (transaction) => {
-            const finalRestaurantId = await handleRestaurantLookup(transaction, input.restaurantId, input);
-            const finalSandwichId = await handleSandwichUpdate(transaction, input.sandwichId, finalRestaurantId, input, imageUrl);
+            const finalRestaurantId = await handleRestaurantLookup(transaction, validatedInput.restaurantId, validatedInput);
+            const finalSandwichId = await handleSandwichUpdate(transaction, validatedInput.sandwichId, finalRestaurantId, validatedInput, imageUrl);
 
             const reviewRef = doc(collection(db, 'reviews'));
             transaction.set(reviewRef, {
-                userId: input.userId,
-                userName: input.userName,
-                rating: input.rating,
-                comment: input.comment,
+                userId: validatedInput.userId,
+                userName: sanitizeText(validatedInput.userName),
+                rating: validatedInput.rating,
+                comment: sanitizeText(validatedInput.comment),
                 sandwichId: finalSandwichId,
                 imageUrl: imageUrl || null,
                 createdAt: serverTimestamp()
             });
 
-            updateGlobalIngredients(transaction, input.ingredients);
+            updateGlobalIngredients(transaction, validatedInput.ingredients);
 
             return { restaurantId: finalRestaurantId, sandwichId: finalSandwichId };
         });
