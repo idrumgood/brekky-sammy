@@ -64,30 +64,27 @@ The project is configured for automated builds and deployments using **Google Cl
 
 Once configured, every merge to `main` will automatically trigger a new build and deployment to Cloud Run.
 
-## 4. Custom Domain & Load Balancing (ALB)
+## 4. Custom Domain & Mapping
 
-To use a custom domain (e.g., `brekkysammy.com`) with a static IP and Google-managed SSL, we use a Global External Application Load Balancer.
+To use a custom domain (e.g., `brekkysammy.com`) without the cost of a Load Balancer, we use Cloud Run's native domain mapping feature.
 
-### Load Balancer Components
+### Domain Mapping Setup
 
-1.  **Static IP**: Reserved a global external IP.
-2.  **Serverless NEG**: Connects the Load Balancer to the Cloud Run service.
-3.  **Backend Service**: Manages the NEG and load balancing settings.
-4.  **URL Map**: Standard routing for the Load Balancer.
-5.  **SSL Certificate**: Google-managed certificate for the custom domain.
-6.  **Forwarding Rule**: Routes traffic from the Static IP (port 443) to the HTTPS proxy.
+1.  **Verify Domain**: Ensure your domain is verified in [Google Search Console](https://search.google.com/search-console/welcome).
+2.  **Create Mapping**:
+    ```bash
+    gcloud beta run domain-mappings create \
+      --service brekkysammy \
+      --domain brekkysammy.com \
+      --region us-central1
+    ```
+3.  **DNS Configuration**: Point your domain to the GCloud entry points.
 
-### DNS Configuration
+### DNS Records
 
-Update your domain registrar (e.g., Squarespace) with the following records:
-
-| Type | Name | Content |
-| :--- | :--- | :--- |
-| A | @ | 34.128.134.242 |
-| CNAME | www | brekkysammy.com (or leave empty if using @) |
-
+Update your domain registrar with the records provided by Google Cloud Run. The records will be available in the [Cloud Run Domain Mapping page](https://console.cloud.google.com/run/domain-mappings).
 > [!NOTE]
-> SSL provisioning begins once the A record is detected. It can take up to 24 hours to become active.
+> Managed SSL certificates are automatically provisioned by Google. This process begins once DNS records are detected and can take up to 24 hours.
 
 ## Local Development vs. Production
 ...
