@@ -118,9 +118,9 @@ export default async function SandwichDetailPage({
                             images={sandwich.allPhotos || (sandwich.imageUrl ? [sandwich.imageUrl] : [])}
                             alt={sandwich.name}
                         />
-                        <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between pointer-events-none">
+                        <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 flex flex-col md:flex-row md:items-end justify-between gap-4 pointer-events-none bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-b-3xl">
                             <div className="pointer-events-auto">
-                                <h1 className="text-4xl font-extrabold text-white mb-2 drop-shadow-md flex items-center gap-3">
+                                <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2 drop-shadow-md flex items-center gap-3">
                                     {sandwich.name}
                                     <EditSandwichModal
                                         sandwich={{
@@ -131,7 +131,7 @@ export default async function SandwichDetailPage({
                                         }}
                                     />
                                 </h1>
-                                <div className="flex items-center gap-4 text-white/90">
+                                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 text-white/90">
                                     <div className="flex items-center gap-1">
                                         <Utensils size={18} />
                                         <span className="font-semibold">{sandwich.restaurant?.name || "Unknown Restaurant"}</span>
@@ -146,7 +146,7 @@ export default async function SandwichDetailPage({
 
                             <Link
                                 href={`/submit?restaurantId=${sandwich.restaurantId}&sandwichId=${sandwich.id}`}
-                                className="bg-primary text-white px-6 py-3 rounded-2xl font-black shadow-lg hover:scale-105 transition-transform flex items-center gap-2 pointer-events-auto"
+                                className="bg-primary text-white px-6 py-3 rounded-2xl font-black shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 pointer-events-auto w-full md:w-auto"
                             >
                                 <Star size={20} className="fill-white" />
                                 Rate This
@@ -222,8 +222,8 @@ export default async function SandwichDetailPage({
 
 
                 {/* Right Column: Restaurant Sidebar */}
-                <div className="space-y-6">
-                    <div className="bg-breakfast-coffee text-white rounded-3xl p-8 sticky top-24 relative group">
+                <div className="lg:sticky lg:top-24 lg:self-start space-y-6">
+                    <div className="bg-breakfast-coffee text-white rounded-3xl p-8 relative group">
                         {sandwich.restaurant && (
                             <div className="absolute top-4 right-4">
                                 <EditRestaurantModal restaurant={sandwich.restaurant} />
@@ -257,7 +257,6 @@ export default async function SandwichDetailPage({
                                     Visit Website
                                 </a>
                             )}
-
                         </div>
                     </div>
 

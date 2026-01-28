@@ -14,7 +14,7 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
 
     if (images.length === 0) {
         return (
-            <div className="relative aspect-video rounded-3xl overflow-hidden bg-secondary flex items-center justify-center border border-border">
+            <div className="relative md:aspect-video aspect-[4/5] rounded-3xl overflow-hidden bg-secondary flex items-center justify-center border border-border">
                 <Image
                     src="https://images.unsplash.com/photo-1550507992-eb63ffee0847?auto=format&fit=crop&q=80&w=2070"
                     alt={alt}
@@ -30,7 +30,7 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
     const prev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
     return (
-        <div className="relative group aspect-video rounded-3xl overflow-hidden shadow-xl border-4 border-white">
+        <div className="relative group md:aspect-video aspect-[4/5] rounded-3xl overflow-hidden shadow-xl border-4 border-white">
             <Image
                 src={images[currentIndex]}
                 alt={`${alt} - Photo ${currentIndex + 1}`}
