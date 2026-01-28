@@ -78,13 +78,13 @@ async function getSandwichData(id: string): Promise<Sandwich | null> {
         ...doc.data()
     })) as unknown as Sandwich[];
 
-    return {
+    return sanitize({
         id: sandwichDoc.id,
-        ...sanitize(sandwichData),
-        restaurant: restaurantData ? { id: restaurantDoc.id, ...sanitize(restaurantData) } : null,
+        ...sandwichData,
+        restaurant: restaurantData ? { id: restaurantDoc.id, ...restaurantData } : null,
         reviews,
         otherSandwiches,
-    } as unknown as Sandwich;
+    }) as unknown as Sandwich;
 }
 
 export default async function SandwichDetailPage({

@@ -1,22 +1,11 @@
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { sanitize } from '@/lib/utils';
 import { Map as MapIcon, Compass, Info } from 'lucide-react';
 import MapView from '@/components/MapView';
 
 export const dynamic = "force-dynamic";
 
-const sanitize = (obj: any) => {
-    if (!obj) return null;
-    const newObj = { ...obj };
-    for (const [key, value] of Object.entries(newObj)) {
-        if (value && typeof value === 'object' && 'toDate' in (value as any)) {
-            newObj[key] = (value as any).toDate().toISOString();
-        } else if (value && typeof value === 'object' && '_seconds' in (value as any)) {
-            newObj[key] = new Date((value as any)._seconds * 1000).toISOString();
-        }
-    }
-    return newObj;
-};
 
 async function getRestaurants() {
     const snap = await getDocs(query(collection(db, 'restaurants'), orderBy('name')));

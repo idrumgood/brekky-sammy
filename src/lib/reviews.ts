@@ -53,7 +53,8 @@ async function handleSandwichUpdate(
             ingredients: input.ingredients.map(cleanIngredient).map(sanitizeText),
             imageUrl: imageUrl || null,
             allPhotos: imageUrl ? [imageUrl] : [],
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            lastReviewedAt: serverTimestamp()
         });
         return sandwichRef.id;
     } else {
@@ -68,12 +69,14 @@ async function handleSandwichUpdate(
             const updates: {
                 reviewCount: number;
                 averageRating: number;
+                lastReviewedAt: any;
                 allPhotos?: string[];
                 imageUrl?: string;
                 ingredients?: string[];
             } = {
                 reviewCount: newCount,
                 averageRating: newAvg,
+                lastReviewedAt: serverTimestamp(),
             };
 
             if (imageUrl) {

@@ -46,6 +46,15 @@ describe('reviews.ts library', () => {
         // 1 (rest) + 1 (sand) + 1 (review) + 2 (ingredients) = 5
         expect(mockTransaction.set).toHaveBeenCalledTimes(5);
 
+        // Verify sandwich was created with lastReviewedAt
+        expect(mockTransaction.set).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({
+                name: 'New Sammy',
+                lastReviewedAt: expect.anything()
+            })
+        );
+
         // Verify badge update was triggered
         expect(updateUserBadges).toHaveBeenCalledWith('user1', ['first_restaurant', 'first_sandwich']);
     });
@@ -83,6 +92,7 @@ describe('reviews.ts library', () => {
             expect.objectContaining({
                 reviewCount: 2,
                 averageRating: 4,
+                lastReviewedAt: expect.anything(),
                 allPhotos: ['old-url.jpg', 'mock-download-url'],
                 ingredients: expect.arrayContaining(['bacon', 'cheese'])
             })
