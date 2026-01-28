@@ -7,6 +7,7 @@ import ProfileStats from "@/components/ProfileStats";
 import { sanitizeText } from "@/lib/sanitization";
 import BadgeIcon from "@/components/BadgeIcon";
 import { ALL_BADGES } from "@/lib/badges";
+import { sanitize } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -31,29 +32,25 @@ async function getUserData(uid: string) {
             restaurantName = restaurantDoc.exists ? restaurantDoc.data()?.name : "Unknown Restaurant";
         }
 
-        return {
+        return sanitize({
             id: doc.id,
             sandwichId: data.sandwichId,
             sandwichName: sandwichData?.name || "Unknown Sandwich",
             restaurantName,
-            rating: data.rating,
-            comment: data.comment,
-            createdAt: data.createdAt?.toISOString?.() || data.createdAt || new Date().toISOString()
-        };
+            ...data
+        });
     }));
 
     reviews.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     // Sanitize user data
-    const sanitizedUser = {
+    const sanitizedUser = sanitize({
         uid,
+        ...userData,
         displayName: sanitizeText(userData?.displayName || "Anonymous Scout"),
-        photoURL: userData?.photoURL || null,
         location: sanitizeText(userData?.location || "Chicago, IL"),
         bio: userData?.bio ? sanitizeText(userData.bio) : null,
-        badges: userData?.badges || [],
-        createdAt: userData?.createdAt?.toDate?.()?.toISOString() || userData?.createdAt || null
-    };
+    });
 
     return {
         user: sanitizedUser,

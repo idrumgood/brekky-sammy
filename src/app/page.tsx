@@ -2,12 +2,13 @@ import Hero from "@/components/Hero";
 import SandwichCard from "@/components/SandwichCard";
 import { db } from "@/lib/firebase-admin";
 import Link from "next/link";
+import { sanitize } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 async function getHomeData() {
   const [sandwichesSnap, restaurantsSnap, usersSnap] = await Promise.all([
-    db.collection("sandwiches").orderBy("averageRating", "desc").limit(4).get(),
+    db.collection("sandwiches").orderBy("lastReviewedAt", "desc").limit(4).get(),
     db.collection("restaurants").get(),
     db.collection("users").limit(10).get() // Get a few users for the avatar display
   ]);
@@ -19,7 +20,7 @@ async function getHomeData() {
     restaurantsSnap.docs.map(doc => [doc.id, doc.data().name])
   );
 
-  const sandwiches = sandwichesSnap.docs.map(doc => ({
+  const sandwiches = sandwichesSnap.docs.map(doc => sanitize({
     id: doc.id,
     ...doc.data(),
     restaurantName: restaurantsMap[doc.data().restaurantId] || "Unknown",
@@ -60,8 +61,8 @@ export default async function Home() {
       <section>
         <div className="flex items-end justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-breakfast-coffee">Top Rated Sammys</h2>
-            <p className="text-muted-foreground">The cream of the crop, as voted by our club.</p>
+            <h2 className="text-3xl font-bold text-breakfast-coffee">Recently Reviewed Sammys</h2>
+            <p className="text-muted-foreground">The latest morning fuel the club has tried.</p>
           </div>
           <Link href="/search" className="text-primary font-bold text-sm hover:underline">
             View All

@@ -1,5 +1,6 @@
 import SandwichCard from "@/components/SandwichCard";
 import { db } from "@/lib/firebase-admin";
+import { sanitize } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ async function searchSandwiches(query: string): Promise<SandwichResult[]> {
 
     const allSandwiches = sandwichesSnap.docs.map(doc => {
         const data = doc.data();
-        return {
+        return sanitize({
             id: doc.id,
             name: data.name,
             restaurantId: data.restaurantId,
@@ -36,7 +37,8 @@ async function searchSandwiches(query: string): Promise<SandwichResult[]> {
             reviewCount: data.reviewCount || 0,
             ingredients: data.ingredients,
             imageUrl: data.imageUrl,
-        };
+            ...data
+        });
     });
 
     if (!query) return allSandwiches;
