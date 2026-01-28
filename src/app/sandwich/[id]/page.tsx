@@ -1,4 +1,5 @@
 import { db } from "@/lib/firebase-admin";
+import { sanitize } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -64,31 +65,13 @@ async function getSandwichData(id: string): Promise<Sandwich | null> {
 
     const reviews = reviewsSnap.docs.map(doc => {
         const data = doc.data();
-        return {
+        return sanitize({
             id: doc.id,
-            userId: data.userId,
-            userName: data.userName,
-            rating: data.rating,
-            comment: data.comment,
-            createdAt: data.createdAt?.toISOString?.() || data.createdAt || null
-        };
-    }) as Review[];
+            ...data
+        });
+    }) as unknown as Review[];
 
     reviews.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-    // Sanitize objects to remove non-plain fields (like Firestore Timestamps)
-    const sanitize = (obj: Record<string, any> | null) => {
-        if (!obj) return null;
-        const newObj = { ...obj };
-        for (const [key, value] of Object.entries(newObj)) {
-            if (value && typeof value === 'object' && 'toDate' in (value as any)) {
-                newObj[key] = (value as any).toDate().toISOString();
-            } else if (value && typeof value === 'object' && '_seconds' in (value as any)) {
-                newObj[key] = new Date((value as any)._seconds * 1000).toISOString();
-            }
-        }
-        return newObj;
-    };
 
     const otherSandwiches = otherSandwichesSnap.docs.map(doc => sanitize({
         id: doc.id,

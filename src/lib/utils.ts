@@ -26,3 +26,22 @@ export function mergeIngredients(existing: string[], added: string[]): string[] 
     const cleanedAdded = added.map(cleanIngredient).filter(Boolean);
     return Array.from(new Set([...existing, ...cleanedAdded]));
 }
+
+/**
+ * Sanitizes an object by converting Firestore Timestamps to ISO strings.
+ * This is necessary for serialization when passing data from Server to Client Components.
+ */
+export function sanitize(obj: any): any {
+    if (!obj) return null;
+    const newObj = { ...obj };
+    for (const [key, value] of Object.entries(newObj)) {
+        if (value && typeof value === 'object') {
+            if ('toDate' in (value as any)) {
+                newObj[key] = (value as any).toDate().toISOString();
+            } else if ('_seconds' in (value as any)) {
+                newObj[key] = new Date((value as any)._seconds * 1000).toISOString();
+            }
+        }
+    }
+    return newObj;
+}
