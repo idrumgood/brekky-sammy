@@ -19,6 +19,7 @@ import ReviewCard from '@/components/ReviewCard';
 import { getUserProfile, updateUserProfile, uploadAvatar, UserProfile } from '@/lib/users';
 import BadgeIcon from '@/components/BadgeIcon';
 import { ALL_BADGES } from '@/lib/badges';
+import { sanitize } from '@/lib/utils';
 
 interface Review {
     id: string;
@@ -108,12 +109,14 @@ export default function ProfilePage() {
                     restaurantName = restaurantDoc.data()?.name || 'Unknown Restaurant';
                 }
 
-                return {
+                const reviewData = sanitize({
                     id: reviewDoc.id,
                     ...data,
                     sandwichName: sandwichData?.name || 'Unknown Sandwich',
                     restaurantName
-                } as Review;
+                });
+
+                return reviewData as Review;
             }));
 
             // Sort by date descending
