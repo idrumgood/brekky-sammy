@@ -10,6 +10,9 @@ export const ReviewSchema = z.object({
     ingredients: z.array(z.string()).max(20, 'Too many ingredients'),
     newRestaurantName: z.string().max(100).optional(),
     newRestaurantWebsite: z.url({ message: 'Invalid website URL' }).or(z.literal('')).optional(),
+    newRestaurantAddress: z.string().max(200).optional(),
+    newRestaurantLat: z.number().optional(),
+    newRestaurantLng: z.number().optional(),
     newSandwichName: z.string().max(100).optional(),
     imageFile: z.instanceof(File).optional(),
 });

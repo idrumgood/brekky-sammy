@@ -32,6 +32,9 @@ export function useReviewForm() {
     const [selectedRestaurantId, setSelectedRestaurantId] = useState('');
     const [newRestaurantName, setNewRestaurantName] = useState('');
     const [newRestaurantWebsite, setNewRestaurantWebsite] = useState('');
+    const [newRestaurantAddress, setNewRestaurantAddress] = useState('');
+    const [newRestaurantLat, setNewRestaurantLat] = useState<number | undefined>(undefined);
+    const [newRestaurantLng, setNewRestaurantLng] = useState<number | undefined>(undefined);
     const [selectedSandwichId, setSelectedSandwichId] = useState('');
     const [newSandwichName, setNewSandwichName] = useState('');
     const [originalIngredients, setOriginalIngredients] = useState<string[]>([]);
@@ -128,6 +131,9 @@ export function useReviewForm() {
                 imageFile: imageFile || undefined,
                 newRestaurantName: selectedRestaurantId === 'new' ? newRestaurantName : undefined,
                 newRestaurantWebsite: selectedRestaurantId === 'new' ? (newRestaurantWebsite || undefined) : undefined,
+                newRestaurantAddress: selectedRestaurantId === 'new' ? (newRestaurantAddress || undefined) : undefined,
+                newRestaurantLat: selectedRestaurantId === 'new' ? newRestaurantLat : undefined,
+                newRestaurantLng: selectedRestaurantId === 'new' ? newRestaurantLng : undefined,
                 newSandwichName: selectedSandwichId === 'new' ? newSandwichName : undefined,
             });
             router.push('/profile');
@@ -152,6 +158,9 @@ export function useReviewForm() {
         selectedRestaurantId, setSelectedRestaurantId,
         newRestaurantName, setNewRestaurantName,
         newRestaurantWebsite, setNewRestaurantWebsite,
+        newRestaurantAddress, setNewRestaurantAddress,
+        newRestaurantLat, setNewRestaurantLat,
+        newRestaurantLng, setNewRestaurantLng,
         selectedSandwichId, setSelectedSandwichId,
         newSandwichName, setNewSandwichName,
         originalIngredients,
