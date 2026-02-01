@@ -21,7 +21,7 @@
     "isomorphic-dompurify": "^2.35.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.562.0",
-    "next": "16.1.4",
+    "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-leaflet": "^5.0.0",
@@ -42,5 +42,8 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.0.18"
+  },
+  "overrides": {
+    "fast-xml-parser": "5.3.4"
   }
 }
