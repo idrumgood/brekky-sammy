@@ -28,7 +28,10 @@ async function handleRestaurantLookup(transaction: Transaction, restaurantId: st
         transaction.set(restaurantRef, {
             name: sanitizeText(input.newRestaurantName),
             website: input.newRestaurantWebsite ? sanitizeUrl(input.newRestaurantWebsite) : null,
-            location: 'Chicago, IL', // Default for now
+            address: input.newRestaurantAddress ? sanitizeText(input.newRestaurantAddress) : null,
+            lat: input.newRestaurantLat || null,
+            lng: input.newRestaurantLng || null,
+            location: 'Chicago, IL', // Default display location
             createdAt: serverTimestamp()
         });
         return restaurantRef.id;

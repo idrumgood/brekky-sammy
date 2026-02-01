@@ -14,6 +14,9 @@ export default function ReviewForm() {
         selectedRestaurantId, setSelectedRestaurantId,
         newRestaurantName, setNewRestaurantName,
         newRestaurantWebsite, setNewRestaurantWebsite,
+        newRestaurantAddress, setNewRestaurantAddress,
+        newRestaurantLat, setNewRestaurantLat,
+        newRestaurantLng, setNewRestaurantLng,
         selectedSandwichId, setSelectedSandwichId,
         newSandwichName, setNewSandwichName,
         originalIngredients,
@@ -64,6 +67,12 @@ export default function ReviewForm() {
                         setNewRestaurantName={setNewRestaurantName}
                         newRestaurantWebsite={newRestaurantWebsite}
                         setNewRestaurantWebsite={setNewRestaurantWebsite}
+                        newRestaurantAddress={newRestaurantAddress}
+                        setNewRestaurantAddress={setNewRestaurantAddress}
+                        newRestaurantLat={newRestaurantLat}
+                        setNewRestaurantLat={setNewRestaurantLat}
+                        newRestaurantLng={newRestaurantLng}
+                        setNewRestaurantLng={setNewRestaurantLng}
                         selectedSandwichId={selectedSandwichId}
                         setSelectedSandwichId={setSelectedSandwichId}
                         newSandwichName={newSandwichName}

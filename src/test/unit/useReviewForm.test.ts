@@ -33,6 +33,9 @@ describe('useReviewForm hook', () => {
         expect(result.current.step).toBe(1);
         expect(result.current.loading).toBe(false);
         expect(result.current.selectedIngredients).toEqual([]);
+        expect(result.current.newRestaurantAddress).toBe('');
+        expect(result.current.newRestaurantLat).toBeUndefined();
+        expect(result.current.newRestaurantLng).toBeUndefined();
     });
 
     it('should transition between steps and keep state', () => {
@@ -45,6 +48,22 @@ describe('useReviewForm hook', () => {
 
         expect(result.current.step).toBe(2);
         expect(result.current.selectedRestaurantId).toBe('rest1');
+    });
+
+    it('should keep track of new restaurant details', () => {
+        const { result } = renderHook(() => useReviewForm());
+
+        act(() => {
+            result.current.setNewRestaurantName('Cool Spot');
+            result.current.setNewRestaurantAddress('321 Egg Ave');
+            result.current.setNewRestaurantLat(41.9);
+            result.current.setNewRestaurantLng(-87.7);
+        });
+
+        expect(result.current.newRestaurantName).toBe('Cool Spot');
+        expect(result.current.newRestaurantAddress).toBe('321 Egg Ave');
+        expect(result.current.newRestaurantLat).toBe(41.9);
+        expect(result.current.newRestaurantLng).toBe(-87.7);
     });
 
     it('should handle ingredient additions and removals', () => {

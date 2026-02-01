@@ -32,6 +32,9 @@ describe('reviews.ts library', () => {
             sandwichId: 'new',
             restaurantId: 'new',
             newRestaurantName: 'New Spot',
+            newRestaurantAddress: '123 Sammy St, Chicago, IL',
+            newRestaurantLat: 41.8781,
+            newRestaurantLng: -87.6298,
             newSandwichName: 'New Sammy',
             ingredients: ['bacon', 'egg']
         };
@@ -45,6 +48,18 @@ describe('reviews.ts library', () => {
         // Check that set was called for restaurant, sandwich, review, and each ingredient
         // 1 (rest) + 1 (sand) + 1 (review) + 2 (ingredients) = 5
         expect(mockTransaction.set).toHaveBeenCalledTimes(5);
+
+        // Verify restaurant was created with new fields
+        expect(mockTransaction.set).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({
+                name: 'New Spot',
+                address: '123 Sammy St, Chicago, IL',
+                lat: 41.8781,
+                lng: -87.6298,
+                location: 'Chicago, IL'
+            })
+        );
 
         // Verify sandwich was created with lastReviewedAt
         expect(mockTransaction.set).toHaveBeenCalledWith(
