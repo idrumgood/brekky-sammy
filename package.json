@@ -44,6 +44,6 @@
     "vitest": "^4.0.18"
   },
   "overrides": {
-    "fast-xml-parser": "5.3.4"
+    "fast-xml-parser": "5.6.1"
   }
 }
