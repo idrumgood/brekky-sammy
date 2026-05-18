@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { collection, getDocs, doc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { deleteSandwichCascading } from '@/lib/admin';
 import { Trash2, Utensils, Loader2, Search, ArrowUpRight, Star } from 'lucide-react';
@@ -50,6 +50,7 @@ export default function SandwichesAdmin() {
     }
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchSandwiches();
     }, []);
 
