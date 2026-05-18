@@ -166,6 +166,85 @@ export async function createReview(input: ReviewInput) {
     }
 }
 
+export async function updateReview(reviewId: string, input: ReviewInput) {
+    const validationResult = ReviewSchema.safeParse(input);
+    if (!validationResult.success) {
+        const errorMsg = validationResult.error.issues.map(i => i.message).join(', ');
+        throw new Error(`Validation failed: ${errorMsg}`);
+    }
+
+    const validatedInput = validationResult.data;
+    let imageUrl = '';
+
+    if (input.imageFile) {
+        imageUrl = await uploadReviewImage(input.imageFile, validatedInput.userId);
+    }
+
+    try {
+        await runTransaction(db, async (transaction) => {
+            const reviewRef = doc(db, 'reviews', reviewId);
+            const reviewSnap = await transaction.get(reviewRef);
+            if (!reviewSnap.exists()) throw new Error('Review not found');
+            const oldReviewData = reviewSnap.data();
+
+            if (oldReviewData.userId !== validatedInput.userId) {
+                throw new Error('Unauthorized');
+            }
+
+            const sandwichRef = doc(db, 'sandwiches', oldReviewData.sandwichId);
+            const sandwichSnap = await transaction.get(sandwichRef);
+
+            if (sandwichSnap.exists()) {
+                const sandwichData = sandwichSnap.data();
+                const count = sandwichData.reviewCount || 1;
+                const currentAvg = sandwichData.averageRating || 0;
+
+                // Recalculate average: (total - old + new) / count
+                const newAvg = ((currentAvg * count) - oldReviewData.rating + validatedInput.rating) / count;
+
+                const sandwichUpdates: any = {
+                    averageRating: newAvg,
+                };
+
+                if (imageUrl) {
+                    let photos = sandwichData.allPhotos || [];
+                    if (oldReviewData.imageUrl) {
+                        photos = photos.map((p: string) => p === oldReviewData.imageUrl ? imageUrl : p);
+                    } else {
+                        photos = [...photos, imageUrl];
+                    }
+                    sandwichUpdates.allPhotos = photos;
+
+                    if (sandwichData.imageUrl === oldReviewData.imageUrl || !sandwichData.imageUrl) {
+                        sandwichUpdates.imageUrl = imageUrl;
+                    }
+                }
+
+                const currentIngredients = sandwichData.ingredients || [];
+                const sanitizedNewIngredients = validatedInput.ingredients.map(sanitizeText);
+                sandwichUpdates.ingredients = mergeIngredients(currentIngredients, sanitizedNewIngredients);
+
+                transaction.update(sandwichRef, sandwichUpdates);
+            }
+
+            const reviewUpdates: any = {
+                rating: validatedInput.rating,
+                comment: sanitizeText(validatedInput.comment),
+                updatedAt: serverTimestamp()
+            };
+            if (imageUrl) {
+                reviewUpdates.imageUrl = imageUrl;
+            }
+
+            transaction.update(reviewRef, reviewUpdates);
+            updateGlobalIngredients(transaction, validatedInput.ingredients);
+        });
+    } catch (error) {
+        console.error('Transaction failed: ', error);
+        throw error;
+    }
+}
+
 export async function updateSandwichDescription(sandwichId: string) {
     try {
         // 1. Get sandwich data

@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, ChevronRight, Maximize2, X } from 'lucide-react';
+import { Star, ChevronRight, Maximize2, X, Edit2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -11,6 +11,7 @@ export interface ReviewCardProps {
     rating: number;
     comment: string;
     createdAt: string;
+    onEdit?: () => void;
     // New flexible props
     title?: string;
     subtitle?: string;
@@ -28,6 +29,7 @@ export default function ReviewCard({
     rating,
     comment,
     createdAt,
+    onEdit,
     title,
     subtitle,
     footer,
@@ -81,9 +83,24 @@ export default function ReviewCard({
                             userInfo
                         )}
                     </div>
-                    <div className="flex items-center gap-1 bg-breakfast-egg px-2 py-1 rounded-lg shrink-0">
-                        <Star size={12} className="text-primary fill-primary" />
-                        <span className="text-xs font-bold text-breakfast-coffee">{rating}</span>
+                    <div className="flex items-center gap-2 shrink-0">
+                        {onEdit && (
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onEdit();
+                                }}
+                                className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                title="Edit Review"
+                            >
+                                <Edit2 size={14} />
+                            </button>
+                        )}
+                        <div className="flex items-center gap-1 bg-breakfast-egg px-2 py-1 rounded-lg">
+                            <Star size={12} className="text-primary fill-primary" />
+                            <span className="text-xs font-bold text-breakfast-coffee">{rating}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -136,12 +153,26 @@ export default function ReviewCard({
                         <div className="p-8 space-y-6">
                             <div className="flex items-start justify-between">
                                 {userInfo}
-                                <button
-                                    onClick={() => setIsExpanded(false)}
-                                    className="p-2 bg-secondary rounded-full text-muted-foreground hover:text-breakfast-coffee transition-colors"
-                                >
-                                    <X size={20} />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    {onEdit && (
+                                        <button
+                                            onClick={() => {
+                                                setIsExpanded(false);
+                                                onEdit();
+                                            }}
+                                            className="p-2 bg-secondary rounded-full text-muted-foreground hover:text-primary transition-colors"
+                                            title="Edit Review"
+                                        >
+                                            <Edit2 size={20} />
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => setIsExpanded(false)}
+                                        className="p-2 bg-secondary rounded-full text-muted-foreground hover:text-breakfast-coffee transition-colors"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="space-y-4">

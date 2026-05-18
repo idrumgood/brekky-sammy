@@ -21,15 +21,20 @@ import { getUserProfile, updateUserProfile, uploadAvatar, UserProfile } from '@/
 import BadgeIcon from '@/components/BadgeIcon';
 import { ALL_BADGES } from '@/lib/badges';
 import { sanitize } from '@/lib/utils';
+import ReviewForm from '@/components/ReviewForm';
+import { ReviewToEdit } from '@/hooks/useReviewForm';
 
 interface Review {
     id: string;
     sandwichId: string;
+    restaurantId: string;
     rating: number;
     comment: string;
     createdAt: string;
     sandwichName?: string;
     restaurantName?: string;
+    ingredients?: string[];
+    imageUrl?: string;
 }
 
 export default function ProfilePage() {
@@ -42,6 +47,7 @@ export default function ProfilePage() {
     // Edit state
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [editingReview, setEditingReview] = useState<ReviewToEdit | null>(null);
     const [formData, setFormData] = useState({
         displayName: '',
         location: '',
@@ -94,7 +100,10 @@ export default function ProfilePage() {
                 const sandwichData = sandwichDoc.data();
 
                 let restaurantName = 'Unknown Restaurant';
+                let restaurantId = data.restaurantId;
+                
                 if (sandwichData?.restaurantId) {
+                    restaurantId = sandwichData.restaurantId;
                     const restaurantDoc = await getDoc(doc(db, 'restaurants', sandwichData.restaurantId));
                     restaurantName = restaurantDoc.data()?.name || 'Unknown Restaurant';
                 }
@@ -102,8 +111,11 @@ export default function ProfilePage() {
                 const reviewData = sanitize({
                     id: reviewDoc.id,
                     ...data,
+                    restaurantId,
                     sandwichName: sandwichData?.name || 'Unknown Sandwich',
-                    restaurantName
+                    restaurantName,
+                    ingredients: sandwichData?.ingredients || [],
+                    imageUrl: data.imageUrl || undefined
                 });
 
                 return reviewData as Review;
@@ -124,7 +136,6 @@ export default function ProfilePage() {
         }
 
         if (user) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchInitialData();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -390,6 +401,15 @@ export default function ProfilePage() {
                                 comment={review.comment}
                                 createdAt={review.createdAt}
                                 footer={`At ${review.restaurantName}`}
+                                onEdit={() => setEditingReview({
+                                    id: review.id,
+                                    rating: review.rating,
+                                    comment: review.comment,
+                                    ingredients: review.ingredients || [],
+                                    imageUrl: review.imageUrl,
+                                    sandwichId: review.sandwichId,
+                                    restaurantId: review.restaurantId
+                                })}
                                 actionLink={{
                                     href: `/sandwich/${review.sandwichId}`,
                                     label: 'View Sammy'
@@ -408,6 +428,33 @@ export default function ProfilePage() {
                     </div>
                 )}
             </section>
+
+            {/* Edit Review Modal */}
+            {editingReview && (
+                <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-breakfast-coffee/60 backdrop-blur-sm animate-in fade-in duration-300"
+                        onClick={() => setEditingReview(null)}
+                    />
+                    <div className="relative w-full max-w-2xl animate-in zoom-in-95 duration-300">
+                        <div className="absolute -top-12 right-0">
+                            <button
+                                onClick={() => setEditingReview(null)}
+                                className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <ReviewForm
+                            reviewToEdit={editingReview}
+                            onSuccess={() => {
+                                setEditingReview(null);
+                                fetchInitialData();
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
         </div >
     );
 }

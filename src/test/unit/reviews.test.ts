@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { createReview } from '@/lib/reviews';
+import { createReview, updateReview } from '@/lib/reviews';
 import { runTransaction } from 'firebase/firestore';
 import { updateUserBadges } from '@/lib/badges';
 
@@ -155,5 +155,82 @@ describe('reviews.ts library', () => {
         };
 
         await expect(createReview(mockInput as any)).rejects.toThrow('Validation failed');
+    });
+
+    it('should update an existing review and recalculate sandwich score', async () => {
+        const mockInput = {
+            userId: 'user1',
+            userName: 'User One',
+            rating: 5, // Old was 3
+            comment: 'Better than I thought!',
+            sandwichId: 'sand1',
+            restaurantId: 'rest1',
+            ingredients: ['bacon', 'egg']
+        };
+
+        // Mock existing review then existing sandwich
+        mockTransaction.get
+            .mockResolvedValueOnce({
+                exists: () => true,
+                data: () => ({
+                    userId: 'user1',
+                    rating: 3,
+                    comment: 'It was okay.',
+                    sandwichId: 'sand1',
+                    imageUrl: 'old-url.jpg'
+                })
+            })
+            .mockResolvedValueOnce({
+                exists: () => true,
+                data: () => ({
+                    reviewCount: 2,
+                    averageRating: 4, // (3 + 5) / 2
+                    ingredients: ['bacon'],
+                    allPhotos: ['old-url.jpg', 'other.jpg'],
+                    imageUrl: 'old-url.jpg'
+                })
+            });
+
+        await updateReview('rev1', mockInput);
+
+        // Verify sandwich update (newAvg = (4*2 - 3 + 5) / 2 = 5)
+        expect(mockTransaction.update).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({
+                averageRating: 5
+            })
+        );
+
+        // Verify review update
+        expect(mockTransaction.update).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({
+                rating: 5,
+                comment: 'Better than I thought!'
+            })
+        );
+    });
+
+    it('should prevent unauthorized review updates', async () => {
+        const mockInput = {
+            userId: 'hacker',
+            userName: 'Hacker',
+            rating: 1,
+            comment: 'I am not the author!',
+            sandwichId: 'sand1',
+            restaurantId: 'rest1',
+            ingredients: []
+        };
+
+        mockTransaction.get.mockResolvedValueOnce({
+            exists: () => true,
+            data: () => ({
+                userId: 'user1',
+                rating: 5,
+                sandwichId: 'sand1'
+            })
+        });
+
+        await expect(updateReview('rev1', mockInput)).rejects.toThrow('Unauthorized');
     });
 });
