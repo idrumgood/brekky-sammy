@@ -15,7 +15,7 @@ interface RatingStepProps {
     setActiveSuggestionIndex: React.Dispatch<React.SetStateAction<number>>;
     addIngredient: (ing: string) => void;
     removeIngredient: (ing: string) => void;
-    onBack: () => void;
+    onBack?: () => void;
     onNext: () => void;
 }
 
@@ -174,14 +174,16 @@ export function RatingStep({
             </div>
 
             <div className="flex gap-4">
-                <button onClick={onBack} className="flex-1 bg-secondary text-breakfast-coffee py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-secondary/80 transition-all">
-                    <ArrowLeft size={20} />
-                    Back
-                </button>
+                {onBack && (
+                    <button onClick={onBack} className="flex-1 bg-secondary text-breakfast-coffee py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-secondary/80 transition-all">
+                        <ArrowLeft size={20} />
+                        Back
+                    </button>
+                )}
                 <button
                     disabled={rating === 0}
                     onClick={onNext}
-                    className="flex-[2] bg-primary text-white py-4 rounded-2xl font-black text-lg shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2"
+                    className={`${onBack ? 'flex-[2]' : 'w-full'} bg-primary text-white py-4 rounded-2xl font-black text-lg shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2`}
                 >
                     Next Step
                     <ArrowRight size={20} />
