@@ -7,8 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "lint:fix": "eslint --fix",
     "test": "vitest"
+  },
+  "overrides": {
+    "@tootallnate/once": "^3.0.1",
+    "postcss": "^8.5.14"
   },
   "dependencies": {
     "@types/dompurify": "^3.0.5",
@@ -34,6 +37,7 @@
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@tootallnate/once": "^3.0.1",
     "@types/node": "^20",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",

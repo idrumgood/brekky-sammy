@@ -115,7 +115,7 @@ export default function AdminDashboard() {
                                 <div
                                     key={i}
                                     className="flex-1 bg-primary/20 rounded-full hover:bg-primary transition-colors cursor-help"
-                                    style={{ height: `${20 + ((i * 17) % 80)}%` }}
+                                    style={{ height: `${20 + Math.random() * 80}%` }}
                                     title={`Traffic slice ${i}`}
                                 />
                             ))}

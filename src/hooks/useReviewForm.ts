@@ -71,7 +71,6 @@ export function useReviewForm() {
             };
             fetchSandwiches();
         } else {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSandwiches([]);
             setSelectedSandwichId('');
         }
@@ -82,7 +81,6 @@ export function useReviewForm() {
             const sandwich = sandwiches.find(s => s.id === selectedSandwichId);
             if (sandwich) {
                 const ings = sandwich.ingredients || [];
-                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setSelectedIngredients(ings);
                 setOriginalIngredients(ings);
             }
