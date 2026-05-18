@@ -16,9 +16,6 @@ import { updateSandwichDescription } from './reviews';
  */
 export async function backfillSandwichDescriptions(onProgress?: (current: number, total: number) => void) {
     const sandwichesRef = collection(db, 'sandwiches');
-    // For backfill, we want everything missing a description
-    const q = query(sandwichesRef, where('description', '==', null));
-    const snap = await getDocs(q);
 
     // Also check for sandwiches where description field doesn't exist at all
     // Firestore '==' null only catches explicit nulls. 

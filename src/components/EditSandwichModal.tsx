@@ -30,7 +30,6 @@ export default function EditSandwichModal({ sandwich, className, onSuccess }: { 
     const router = useRouter();
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
         if (isOpen) {
             const fetchIngredients = async () => {
