@@ -6,7 +6,6 @@ import ReviewCard from "@/components/ReviewCard";
 import ProfileStats from "@/components/ProfileStats";
 import { sanitizeText } from "@/lib/sanitization";
 import BadgeIcon from "@/components/BadgeIcon";
-import { ALL_BADGES } from "@/lib/badges";
 import { sanitize } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";

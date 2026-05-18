@@ -1,4 +1,4 @@
-import { MapPin, Utensils, ArrowRight, Search, Loader2, Globe, Crosshair } from 'lucide-react';
+import { MapPin, Utensils, ArrowRight, Search, Loader2, Globe } from 'lucide-react';
 import { useState } from 'react';
 import { Restaurant, Sandwich } from '@/hooks/useReviewForm';
 
@@ -35,9 +35,7 @@ export function RestaurantStep({
     setNewRestaurantWebsite,
     newRestaurantAddress,
     setNewRestaurantAddress,
-    newRestaurantLat,
     setNewRestaurantLat,
-    newRestaurantLng,
     setNewRestaurantLng,
     selectedSandwichId,
     setSelectedSandwichId,

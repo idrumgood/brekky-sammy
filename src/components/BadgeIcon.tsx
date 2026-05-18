@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Badge as BadgeType, ALL_BADGES } from '@/lib/badges';
-import Image from 'next/image';
+import { ALL_BADGES } from '@/lib/badges';
 
 interface BadgeIconProps {
     slug: string;

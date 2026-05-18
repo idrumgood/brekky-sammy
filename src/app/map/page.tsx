@@ -1,7 +1,7 @@
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { sanitize } from '@/lib/utils';
-import { Map as MapIcon, Compass, Info } from 'lucide-react';
+import { Map as MapIcon } from 'lucide-react';
 import MapView from '@/components/MapView';
 
 export const dynamic = "force-dynamic";
