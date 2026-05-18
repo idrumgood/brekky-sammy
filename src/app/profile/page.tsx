@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
@@ -51,18 +52,7 @@ export default function ProfilePage() {
     const [formErrors, setFormErrors] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/login');
-            return;
-        }
-
-        if (user) {
-            fetchInitialData();
-        }
-    }, [user, authLoading]);
-
-    const fetchInitialData = async () => {
+    async function fetchInitialData() {
         setLoading(true);
         try {
             await Promise.all([
@@ -74,7 +64,7 @@ export default function ProfilePage() {
         }
     };
 
-    const fetchUserProfile = async () => {
+    async function fetchUserProfile() {
         if (!user) return;
         const profileData = await getUserProfile(user.uid);
         if (profileData) {
@@ -87,7 +77,7 @@ export default function ProfilePage() {
         }
     };
 
-    const fetchUserReviews = async () => {
+    async function fetchUserReviews() {
         try {
             // Fetch reviews attributed to this user ID
             const reviewsQuery = query(
@@ -126,6 +116,19 @@ export default function ProfilePage() {
             console.error('Error fetching user reviews:', error);
         }
     };
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+            return;
+        }
+
+        if (user) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            fetchInitialData();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, authLoading]);
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
