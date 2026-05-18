@@ -12,6 +12,8 @@ import { cleanIngredient, mergeIngredients } from './utils';
 import { ReviewSchema, ReviewInput } from './validation';
 import { sanitizeText, sanitizeUrl } from './sanitization';
 import { updateUserBadges } from './badges';
+import { generateSandwichDescription } from './gemini';
+import { query, where, getDoc, updateDoc } from 'firebase/firestore';
 
 // ReviewInput is now imported from ./validation
 
@@ -154,10 +156,55 @@ export async function createReview(input: ReviewInput) {
 
         updateUserBadges(validatedInput.userId, newAchievements).catch(err => console.error('Error awarding badges:', err));
 
+        // Update sandwich description asynchronously
+        updateSandwichDescription(result.sandwichId).catch(err => console.error('Error updating sandwich description:', err));
+
         return result;
     } catch (error) {
         console.error('Transaction failed: ', error);
         throw error;
+    }
+}
+
+export async function updateSandwichDescription(sandwichId: string) {
+    try {
+        // 1. Get sandwich data
+        const sandwichRef = doc(db, 'sandwiches', sandwichId);
+        const sandwichSnap = await getDoc(sandwichRef);
+        if (!sandwichSnap.exists()) return;
+        const sandwichData = sandwichSnap.data();
+
+        // 2. Get restaurant name
+        const restaurantRef = doc(db, 'restaurants', sandwichData.restaurantId);
+        const restaurantSnap = await getDoc(restaurantRef);
+        const restaurantName = restaurantSnap.exists() ? restaurantSnap.data().name : 'Unknown Restaurant';
+
+        // 3. Get all reviews for this sandwich
+        const reviewsRef = collection(db, 'reviews');
+        const q = query(reviewsRef, where('sandwichId', '==', sandwichId));
+        const reviewsSnap = await getDocs(q);
+        const reviews = reviewsSnap.docs
+            .map(doc => doc.data().comment)
+            .filter(comment => !!comment && comment.length > 5); // Only meaningful reviews
+
+        if (reviews.length === 0) return;
+
+        // 4. Generate new description
+        const newDescription = await generateSandwichDescription(
+            sandwichData.name,
+            restaurantName,
+            reviews
+        );
+
+        // 5. Update sandwich document
+        if (newDescription) {
+            await updateDoc(sandwichRef, {
+                description: newDescription,
+                descriptionUpdatedAt: serverTimestamp()
+            });
+        }
+    } catch (error) {
+        console.error('Error in updateSandwichDescription:', error);
     }
 }
 
