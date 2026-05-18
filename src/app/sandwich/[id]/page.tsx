@@ -39,6 +39,7 @@ interface Sandwich {
     ingredients?: string[];
     imageUrl?: string;
     allPhotos?: string[];
+    description?: string;
     restaurant: Restaurant | null;
     reviews: Review[];
     otherSandwiches: any[];
@@ -162,11 +163,23 @@ export default async function SandwichDetailPage({
                         </h2>
 
                         <div className="space-y-6 text-muted-foreground leading-relaxed">
-                            <p>
-                                Experience one of the finest breakfast creations at <strong>{sandwich.restaurant?.name}</strong>.
-                                This sandwich has earned an impressive <strong>{sandwich.averageRating?.toFixed(1)} star</strong> average across
-                                <strong> {sandwich.reviewCount}</strong> authentic reviews from the Sunday Brunch Club.
-                            </p>
+                            {sandwich.description ? (
+                                <div className="prose prose-breakfast max-w-none">
+                                    <p className="text-lg text-breakfast-coffee/80 leading-relaxed italic">
+                                        &ldquo;{sandwich.description}&rdquo;
+                                    </p>
+                                    <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
+                                        <div className="w-4 h-[1px] bg-muted-foreground/30" />
+                                        AI Generated Blurb from Member Reviews
+                                    </div>
+                                </div>
+                            ) : (
+                                <p>
+                                    Experience one of the finest breakfast creations at <strong>{sandwich.restaurant?.name}</strong>.
+                                    This sandwich has earned an impressive <strong>{sandwich.averageRating?.toFixed(1)} star</strong> average across
+                                    <strong> {sandwich.reviewCount}</strong> authentic reviews from the Sunday Brunch Club.
+                                </p>
+                            )}
 
                             {sandwich.ingredients && sandwich.ingredients.length > 0 && (
                                 <div className="space-y-3">

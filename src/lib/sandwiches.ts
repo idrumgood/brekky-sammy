@@ -10,6 +10,7 @@ export interface Sandwich {
     ingredients?: string[];
     imageUrl?: string;
     allPhotos?: string[];
+    description?: string;
     createdAt?: unknown;
 }
 

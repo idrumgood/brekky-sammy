@@ -8,6 +8,40 @@ import {
     deleteDoc,
     writeBatch
 } from 'firebase/firestore';
+import { updateSandwichDescription } from './reviews';
+
+/**
+ * Backfills descriptions for all sandwiches that are missing one.
+ * @returns Object with results summary
+ */
+export async function backfillSandwichDescriptions(onProgress?: (current: number, total: number) => void) {
+    const sandwichesRef = collection(db, 'sandwiches');
+    // For backfill, we want everything missing a description
+    const q = query(sandwichesRef, where('description', '==', null));
+    const snap = await getDocs(q);
+
+    // Also check for sandwiches where description field doesn't exist at all
+    // Firestore '==' null only catches explicit nulls. 
+    // We'll fetch all and filter client-side for simplicity given < 20 sandwiches
+    const allSnap = await getDocs(sandwichesRef);
+    const missing = allSnap.docs.filter(doc => !doc.data().description);
+
+    if (missing.length === 0) return { updated: 0, total: 0 };
+
+    let updatedCount = 0;
+    for (let i = 0; i < missing.length; i++) {
+        const sandwichDoc = missing[i];
+        try {
+            await updateSandwichDescription(sandwichDoc.id);
+            updatedCount++;
+        } catch (error) {
+            console.error(`Failed backfill for ${sandwichDoc.id}:`, error);
+        }
+        if (onProgress) onProgress(i + 1, missing.length);
+    }
+
+    return { updated: updatedCount, total: missing.length };
+}
 
 /**
  * Deletes all reviews for a specific sandwich.

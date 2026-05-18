@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { deleteSandwichCascading } from '@/lib/admin';
-import { Trash2, Utensils, Loader2, Search, ArrowUpRight, Star } from 'lucide-react';
+import { deleteSandwichCascading, backfillSandwichDescriptions } from '@/lib/admin';
+import { Trash2, Utensils, Loader2, Search, ArrowUpRight, Star, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import EditSandwichModal from '@/components/EditSandwichModal';
 
@@ -16,6 +16,7 @@ interface SandwichData {
     averageRating: number;
     reviewCount: number;
     ingredients?: string[];
+    description?: string;
     createdAt?: any;
 }
 
@@ -24,8 +25,11 @@ export default function SandwichesAdmin() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [deleting, setDeleting] = useState<string | null>(null);
+    const [backfilling, setBackfilling] = useState(false);
+    const [progress, setProgress] = useState({ current: 0, total: 0 });
 
     async function fetchSandwiches() {
+        setLoading(true);
         try {
             // Fetch sandwiches and restaurants to get the names
             const [sandSnap, restSnap] = await Promise.all([
@@ -49,8 +53,26 @@ export default function SandwichesAdmin() {
         }
     }
 
+    const handleBackfill = async () => {
+        if (!confirm('This will generate AI descriptions for all sandwiches currently missing one. Continue?')) return;
+
+        setBackfilling(true);
+        try {
+            const result = await backfillSandwichDescriptions((current, total) => {
+                setProgress({ current, total });
+            });
+            alert(`Backfill complete! Updated ${result.updated} of ${result.total} sandwiches.`);
+            fetchSandwiches();
+        } catch (error) {
+            console.error("Backfill failed:", error);
+            alert("An error occurred during backfill.");
+        } finally {
+            setBackfilling(false);
+            setProgress({ current: 0, total: 0 });
+        }
+    };
+
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchSandwiches();
     }, []);
 
@@ -92,6 +114,24 @@ export default function SandwichesAdmin() {
                         className="w-full bg-secondary/30 border border-border/50 rounded-2xl py-3.5 pl-12 pr-4 focus:ring-4 focus:ring-primary/10 transition-all outline-none font-medium"
                     />
                 </div>
+
+                <button
+                    onClick={handleBackfill}
+                    disabled={backfilling || loading}
+                    className="flex items-center gap-2 bg-breakfast-coffee text-white px-6 py-3.5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary transition-all disabled:opacity-50 shadow-lg active:scale-95"
+                >
+                    {backfilling ? (
+                        <>
+                            <Loader2 size={16} className="animate-spin" />
+                            {progress.total > 0 ? `Generating... (${progress.current}/${progress.total})` : 'Initializing...'}
+                        </>
+                    ) : (
+                        <>
+                            <Sparkles size={16} className="fill-white" />
+                            Generate Descriptions
+                        </>
+                    )}
+                </button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-12">
