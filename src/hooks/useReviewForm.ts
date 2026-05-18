@@ -3,7 +3,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { createReview, getGlobalIngredients } from '@/lib/reviews';
+import { createReview, updateReview, getGlobalIngredients } from '@/lib/reviews';
 
 export interface Restaurant {
     id: string;
@@ -17,10 +17,20 @@ export interface Sandwich {
     ingredients?: string[];
 }
 
-export function useReviewForm() {
+export interface ReviewToEdit {
+    id: string;
+    rating: number;
+    comment: string;
+    ingredients: string[];
+    imageUrl?: string;
+    sandwichId: string;
+    restaurantId: string;
+}
+
+export function useReviewForm(reviewToEdit?: ReviewToEdit, onSuccess?: () => void) {
     const { user } = useAuth();
     const router = useRouter();
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(reviewToEdit ? 2 : 1);
     const [loading, setLoading] = useState(false);
 
     // Form Data
@@ -29,24 +39,24 @@ export function useReviewForm() {
     const [globalIngredients, setGlobalIngredients] = useState<string[]>([]);
 
     // Form State
-    const [selectedRestaurantId, setSelectedRestaurantId] = useState('');
+    const [selectedRestaurantId, setSelectedRestaurantId] = useState(reviewToEdit?.restaurantId || '');
     const [newRestaurantName, setNewRestaurantName] = useState('');
     const [newRestaurantWebsite, setNewRestaurantWebsite] = useState('');
     const [newRestaurantAddress, setNewRestaurantAddress] = useState('');
     const [newRestaurantLat, setNewRestaurantLat] = useState<number | undefined>(undefined);
     const [newRestaurantLng, setNewRestaurantLng] = useState<number | undefined>(undefined);
-    const [selectedSandwichId, setSelectedSandwichId] = useState('');
+    const [selectedSandwichId, setSelectedSandwichId] = useState(reviewToEdit?.sandwichId || '');
     const [newSandwichName, setNewSandwichName] = useState('');
     const [originalIngredients, setOriginalIngredients] = useState<string[]>([]);
 
-    const [rating, setRating] = useState(0);
+    const [rating, setRating] = useState(reviewToEdit?.rating || 0);
     const [hoverRating, setHoverRating] = useState(0);
-    const [comment, setComment] = useState('');
-    const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
+    const [comment, setComment] = useState(reviewToEdit?.comment || '');
+    const [selectedIngredients, setSelectedIngredients] = useState<string[]>(reviewToEdit?.ingredients || []);
     const [newIngredient, setNewIngredient] = useState('');
     const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
     const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(reviewToEdit?.imageUrl || null);
     const [formErrors, setFormErrors] = useState<string[]>([]);
 
     useEffect(() => {
@@ -70,27 +80,27 @@ export function useReviewForm() {
                 );
             };
             fetchSandwiches();
-        } else {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+        } else if (!reviewToEdit) {
             setSandwiches([]);
             setSelectedSandwichId('');
         }
-    }, [selectedRestaurantId]);
+    }, [selectedRestaurantId, reviewToEdit]);
 
     useEffect(() => {
         if (selectedSandwichId && selectedSandwichId !== 'new') {
             const sandwich = sandwiches.find(s => s.id === selectedSandwichId);
             if (sandwich) {
                 const ings = sandwich.ingredients || [];
-                // eslint-disable-next-line react-hooks/set-state-in-effect
-                setSelectedIngredients(ings);
                 setOriginalIngredients(ings);
+                if (!reviewToEdit) {
+                    setSelectedIngredients(ings);
+                }
             }
-        } else {
+        } else if (!reviewToEdit) {
             setSelectedIngredients([]);
             setOriginalIngredients([]);
         }
-    }, [selectedSandwichId, sandwiches]);
+    }, [selectedSandwichId, sandwiches, reviewToEdit]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -122,7 +132,7 @@ export function useReviewForm() {
         setLoading(true);
         setFormErrors([]);
         try {
-            await createReview({
+            const reviewInput = {
                 userId: user.uid,
                 userName: user.displayName || user.email?.split('@')[0] || 'Anonymous',
                 rating,
@@ -131,14 +141,23 @@ export function useReviewForm() {
                 restaurantId: selectedRestaurantId,
                 ingredients: selectedIngredients,
                 imageFile: imageFile || undefined,
-                newRestaurantName: selectedRestaurantId === 'new' ? newRestaurantName : undefined,
-                newRestaurantWebsite: selectedRestaurantId === 'new' ? (newRestaurantWebsite || undefined) : undefined,
-                newRestaurantAddress: selectedRestaurantId === 'new' ? (newRestaurantAddress || undefined) : undefined,
-                newRestaurantLat: selectedRestaurantId === 'new' ? newRestaurantLat : undefined,
-                newRestaurantLng: selectedRestaurantId === 'new' ? newRestaurantLng : undefined,
-                newSandwichName: selectedSandwichId === 'new' ? newSandwichName : undefined,
-            });
-            router.push('/profile');
+            };
+
+            if (reviewToEdit) {
+                await updateReview(reviewToEdit.id, reviewInput);
+                if (onSuccess) onSuccess();
+            } else {
+                await createReview({
+                    ...reviewInput,
+                    newRestaurantName: selectedRestaurantId === 'new' ? newRestaurantName : undefined,
+                    newRestaurantWebsite: selectedRestaurantId === 'new' ? (newRestaurantWebsite || undefined) : undefined,
+                    newRestaurantAddress: selectedRestaurantId === 'new' ? (newRestaurantAddress || undefined) : undefined,
+                    newRestaurantLat: selectedRestaurantId === 'new' ? newRestaurantLat : undefined,
+                    newRestaurantLng: selectedRestaurantId === 'new' ? newRestaurantLng : undefined,
+                    newSandwichName: selectedSandwichId === 'new' ? newSandwichName : undefined,
+                });
+                router.push('/profile');
+            }
         } catch (error: any) {
             console.error('Error submitting review:', error);
             if (error.message?.includes('Validation failed')) {

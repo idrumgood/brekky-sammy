@@ -1,12 +1,18 @@
 'use client';
 
-import { useReviewForm } from '@/hooks/useReviewForm';
+import { useReviewForm, ReviewToEdit } from '@/hooks/useReviewForm';
 import { RestaurantStep } from './review/RestaurantStep';
 import { RatingStep } from './review/RatingStep';
 import { PhotoStep } from './review/PhotoStep';
 import { SummaryStep } from './review/SummaryStep';
 
-export default function ReviewForm() {
+export default function ReviewForm({
+    reviewToEdit,
+    onSuccess
+}: {
+    reviewToEdit?: ReviewToEdit;
+    onSuccess?: () => void;
+}) {
     const {
         step, setStep,
         loading,
@@ -33,7 +39,9 @@ export default function ReviewForm() {
         addIngredient,
         removeIngredient,
         handleSubmit
-    } = useReviewForm();
+    } = useReviewForm(reviewToEdit, onSuccess);
+
+    const isEditMode = !!reviewToEdit;
 
     return (
         <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl border border-border relative overflow-hidden">
@@ -57,7 +65,7 @@ export default function ReviewForm() {
             )}
 
             <div className="p-8 md:p-12">
-                {step === 1 && (
+                {step === 1 && !isEditMode && (
                     <RestaurantStep
                         restaurants={restaurants}
                         sandwiches={sandwiches}
@@ -96,7 +104,7 @@ export default function ReviewForm() {
                         setActiveSuggestionIndex={setActiveSuggestionIndex}
                         addIngredient={addIngredient}
                         removeIngredient={removeIngredient}
-                        onBack={() => setStep(1)}
+                        onBack={isEditMode ? undefined : () => setStep(1)}
                         onNext={() => setStep(3)}
                     />
                 )}
