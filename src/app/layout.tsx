@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://brekkysammy.com'),
   title: "BrekkySammy | The Ultimate Breakfast Sandwich Club",
   description: "Join the brunch club and rate the best (and worst) breakfast sandwiches in town.",
 };

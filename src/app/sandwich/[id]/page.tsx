@@ -1,5 +1,6 @@
 import { db } from "@/lib/firebase-admin";
 import { sanitize } from "@/lib/utils";
+import type { Metadata, ResolvingMetadata } from "next";
 
 export const dynamic = "force-dynamic";
 
@@ -87,11 +88,47 @@ async function getSandwichData(id: string): Promise<Sandwich | null> {
     }) as unknown as Sandwich;
 }
 
+type Props = {
+    params: Promise<{ id: string }>;
+};
+
+export async function generateMetadata(
+    { params }: Props,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    const { id } = await params;
+    const sandwich = await getSandwichData(id);
+
+    if (!sandwich) {
+        return {
+            title: "Sandwich Not Found | BrekkySammy",
+        };
+    }
+
+    const previousImages = (await parent).openGraph?.images || [];
+    const imageUrl = sandwich.imageUrl || (sandwich.allPhotos && sandwich.allPhotos[0]) || "";
+    const description = `Check out the ${sandwich.name} at ${sandwich.restaurant?.name || "a local spot"} on BrekkySammy. Rated ${sandwich.averageRating?.toFixed(1) || "N/A"} stars from ${sandwich.reviewCount || 0} reviews!`;
+
+    return {
+        title: `${sandwich.name} | ${sandwich.restaurant?.name || "BrekkySammy"}`,
+        description: description,
+        openGraph: {
+            title: `${sandwich.name} | BrekkySammy`,
+            description: description,
+            images: imageUrl ? [imageUrl, ...previousImages] : previousImages,
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `${sandwich.name} | BrekkySammy`,
+            description: description,
+            images: imageUrl ? [imageUrl] : [],
+        },
+    };
+}
+
 export default async function SandwichDetailPage({
     params,
-}: {
-    params: Promise<{ id: string }>;
-}) {
+}: Props) {
     const { id } = await params;
     const sandwich = await getSandwichData(id);
 
