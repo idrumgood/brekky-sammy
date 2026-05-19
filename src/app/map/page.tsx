@@ -1,14 +1,12 @@
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/firebase-admin';
 import { sanitize } from '@/lib/utils';
 import { Map as MapIcon } from 'lucide-react';
 import MapView from '@/components/MapView';
 
 export const dynamic = "force-dynamic";
 
-
 async function getRestaurants() {
-    const snap = await getDocs(query(collection(db, 'restaurants'), orderBy('name')));
+    const snap = await db.collection('restaurants').orderBy('name').get();
     return snap.docs.map(doc => sanitize({ id: doc.id, ...doc.data() })) as any[];
 }
 
