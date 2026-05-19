@@ -30,14 +30,24 @@ function MapBoundsHandler({ restaurants }: { restaurants: Restaurant[] }) {
     const map = useMap();
 
     useEffect(() => {
-        if (restaurants.length === 0) return;
+        if (!restaurants || restaurants.length === 0) return;
 
-        const bounds = L.latLngBounds(restaurants.map(r => [r.lat!, r.lng!] as [number, number]));
+        try {
+            const validPoints = restaurants
+                .filter(r => typeof r.lat === 'number' && typeof r.lng === 'number' && !isNaN(r.lat) && !isNaN(r.lng))
+                .map(r => [r.lat!, r.lng!] as [number, number]);
 
-        if (restaurants.length === 1) {
-            map.setView(bounds.getCenter(), 15);
-        } else {
-            map.fitBounds(bounds, { padding: [50, 50], animate: true });
+            if (validPoints.length === 0) return;
+
+            const bounds = L.latLngBounds(validPoints);
+
+            if (validPoints.length === 1) {
+                map.setView(bounds.getCenter(), 15);
+            } else if (bounds.isValid()) {
+                map.fitBounds(bounds, { padding: [50, 50], animate: true });
+            }
+        } catch (error) {
+            console.error("Error in MapBoundsHandler:", error);
         }
     }, [map, restaurants]);
 
@@ -47,6 +57,7 @@ function MapBoundsHandler({ restaurants }: { restaurants: Restaurant[] }) {
 function MapResizeHandler() {
     const map = useMap();
     useEffect(() => {
+        if (!map) return;
         // Invalidate size once on mount and once after a short delay
         // to handle any layout shifts or animations.
         map.invalidateSize();
@@ -63,7 +74,13 @@ export default function MapComponent({ restaurants }: { restaurants: Restaurant[
     const defaultCenter: [number, number] = [41.8781, -87.6298];
     const zoom = 12;
 
-    const restaurantsWithCoords = restaurants.filter(r => r.lat !== undefined && r.lng !== undefined);
+    const restaurantsWithCoords = (restaurants || []).filter(r => 
+        r &&
+        typeof r.lat === 'number' && 
+        typeof r.lng === 'number' &&
+        !isNaN(r.lat) &&
+        !isNaN(r.lng)
+    );
 
     return (
         <MapContainer
@@ -79,50 +96,54 @@ export default function MapComponent({ restaurants }: { restaurants: Restaurant[
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
                 url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             />
-            {restaurantsWithCoords.map((rest) => (
-                <Marker
-                    key={rest.id}
-                    position={[rest.lat!, rest.lng!]}
-                    icon={DefaultIcon}
-                >
-                    <Popup className="restaurant-popup">
-                        <div className="p-2 space-y-3 min-w-[200px]">
-                            <h3 className="text-lg font-black text-breakfast-coffee leading-tight">{rest.name}</h3>
-                            <div className="space-y-1.5">
-                                {rest.address && (
-                                    <div className="flex items-start gap-2 text-xs text-muted-foreground font-medium">
-                                        <MapPin size={14} className="mt-0.5 text-primary" />
-                                        <span>{rest.address}</span>
+            {restaurantsWithCoords.map((rest) => {
+                if (!rest || typeof rest.lat !== 'number' || typeof rest.lng !== 'number') return null;
+                
+                return (
+                    <Marker
+                        key={rest.id}
+                        position={{ lat: rest.lat, lng: rest.lng }}
+                        icon={DefaultIcon}
+                    >
+                        <Popup className="restaurant-popup">
+                            <div className="p-2 space-y-3 min-w-[200px]">
+                                <h3 className="text-lg font-black text-breakfast-coffee leading-tight">{rest.name}</h3>
+                                <div className="space-y-1.5">
+                                    {rest.address && (
+                                        <div className="flex items-start gap-2 text-xs text-muted-foreground font-medium">
+                                            <MapPin size={14} className="mt-0.5 text-primary" />
+                                            <span>{rest.address}</span>
+                                        </div>
+                                    )}
+                                    <div className="flex items-center gap-2 text-[10px] font-bold text-breakfast-coffee/60 uppercase tracking-wider">
+                                        <Store size={12} />
+                                        {rest.location || 'Unknown Area'}
                                     </div>
-                                )}
-                                <div className="flex items-center gap-2 text-[10px] font-bold text-breakfast-coffee/60 uppercase tracking-wider">
-                                    <Store size={12} />
-                                    {rest.location || 'Unknown Area'}
+                                </div>
+                                <div className="flex gap-2 pt-2 border-t border-border/50">
+                                    {rest.website && (
+                                        <a
+                                            href={rest.website}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex-1 bg-secondary hover:bg-primary hover:text-white text-[10px] font-black uppercase tracking-widest py-2 rounded-lg transition-all text-center flex items-center justify-center gap-1.5"
+                                        >
+                                            <Globe size={12} />
+                                            Site
+                                        </a>
+                                    )}
+                                    <a
+                                        href={`/search?q=${encodeURIComponent(rest.name)}`}
+                                        className="flex-1 bg-breakfast-coffee text-white hover:bg-breakfast-coffee/90 text-[10px] font-black uppercase tracking-widest py-2 rounded-lg transition-all text-center"
+                                    >
+                                        Reviews
+                                    </a>
                                 </div>
                             </div>
-                            <div className="flex gap-2 pt-2 border-t border-border/50">
-                                {rest.website && (
-                                    <a
-                                        href={rest.website}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex-1 bg-secondary hover:bg-primary hover:text-white text-[10px] font-black uppercase tracking-widest py-2 rounded-lg transition-all text-center flex items-center justify-center gap-1.5"
-                                    >
-                                        <Globe size={12} />
-                                        Site
-                                    </a>
-                                )}
-                                <a
-                                    href={`/search?q=${encodeURIComponent(rest.name)}`}
-                                    className="flex-1 bg-breakfast-coffee text-white hover:bg-breakfast-coffee/90 text-[10px] font-black uppercase tracking-widest py-2 rounded-lg transition-all text-center"
-                                >
-                                    Reviews
-                                </a>
-                            </div>
-                        </div>
-                    </Popup>
-                </Marker>
-            ))}
+                        </Popup>
+                    </Marker>
+                );
+            })}
         </MapContainer>
     );
 }
